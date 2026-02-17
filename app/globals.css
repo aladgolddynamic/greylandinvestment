@@ -10,6 +10,17 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Refined Brand Identity Colors */
+  --color-primary-orange: #F28C28;
+  --color-primary-dark: #181411;
+  --color-nav-bg: #F2F2F2;
+  --color-hero-blue-start: #3F4A5A;
+  --color-hero-blue-end: #5B5F73;
+  --color-footer-navy: #0F1C2E;
+  --color-text-white: #F8F9FA;
+  --color-text-muted: #D1D5DB;
+  --color-border-grey: #E0E0E0;
 }
 
 @media (prefers-color-scheme: dark) {

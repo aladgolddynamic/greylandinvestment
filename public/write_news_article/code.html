@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Write News Article</title>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221910",
+                        "surface-dark": "#2d241b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for editor */
+        .editor-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        .editor-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .editor-content::-webkit-scrollbar-thumb {
+            background-color: #54473b;
+            border-radius: 20px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen flex flex-col overflow-hidden">
+<!-- Header -->
+<header class="flex items-center justify-between px-4 py-3 bg-background-light dark:bg-background-dark border-b border-gray-200 dark:border-[#393028] z-10 shrink-0">
+<button class="flex items-center justify-center size-10 text-gray-900 dark:text-white hover:bg-black/5 dark:hover:bg-white/10 rounded-full transition-colors">
+<span class="material-symbols-outlined">arrow_back_ios_new</span>
+</button>
+<h1 class="text-lg font-bold text-gray-900 dark:text-white">Write News Article</h1>
+<div class="size-10"></div> <!-- Spacer for visual balance -->
+</header>
+<!-- Main Content (Scrollable) -->
+<main class="flex-1 overflow-y-auto w-full max-w-md mx-auto pb-24">
+<!-- Metadata Section -->
+<div class="p-4 space-y-5">
+<!-- Article Title -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Article Title</label>
+<input class="w-full bg-surface-light dark:bg-[#2d241b] text-gray-900 dark:text-white placeholder-gray-400 border border-gray-200 dark:border-[#393028] rounded-lg px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Enter a catchy headline..." type="text"/>
+</div>
+<!-- Category & Date Row -->
+<div class="flex gap-4">
+<!-- Category -->
+<div class="flex-1 space-y-2">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
+<div class="relative">
+<select class="w-full appearance-none bg-surface-light dark:bg-[#2d241b] text-gray-900 dark:text-white border border-gray-200 dark:border-[#393028] rounded-lg pl-4 pr-10 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<option value="">Select...</option>
+<option value="market">Market Updates</option>
+<option value="company">Company News</option>
+<option value="insights">Insights</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+<span class="material-symbols-outlined text-xl">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Publish Date -->
+<div class="flex-1 space-y-2">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Publish Date</label>
+<div class="relative">
+<input class="w-full bg-surface-light dark:bg-[#2d241b] text-gray-900 dark:text-white border border-gray-200 dark:border-[#393028] rounded-lg px-4 py-3.5 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent [&amp;::-webkit-calendar-picker-indicator]:invert dark:[&amp;::-webkit-calendar-picker-indicator]:invert-0 [&amp;::-webkit-calendar-picker-indicator]:opacity-50" type="date"/>
+</div>
+</div>
+</div>
+<!-- Upload Featured Image -->
+<div class="space-y-2">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Featured Image</label>
+<div class="group relative w-full h-40 border-2 border-dashed border-gray-300 dark:border-[#54473b] rounded-xl flex flex-col items-center justify-center bg-gray-50 dark:bg-[#2d241b]/50 hover:bg-gray-100 dark:hover:bg-[#2d241b] transition-colors cursor-pointer overflow-hidden">
+<div class="flex flex-col items-center gap-2 z-10">
+<div class="size-10 rounded-full bg-surface-light dark:bg-[#393028] flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined">add_photo_alternate</span>
+</div>
+<p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Tap to upload (16:9)</p>
+</div>
+<!-- Placeholder background image for demo purposes -->
+<img alt="Abstract financial chart background" class="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" data-alt="Abstract dark blurred chart background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyR5kF-RjQPbk4TIqQQ_rDXbeBBcEhwMajABxzjXPAtowKi7dUQrw9rKuE2DabpNtdiI3SKdmhkTfzDfgvKfGkntO6JJt0jPIT87kk3XKZ4JT7yO2N0Sg_riyXA5HTBM7n5GPGEA4O5-UIFmtOmZkV6zWJMuyhiq8zYfmeIBi52cKrQaX2f-HpFarILI_NWn5g0B2yGIsmu6vFl_6tWkyesq8huZWCEf49ZTgdwOZTx2BnZmw213_8tRlWpRFjit6p3cK-TiP2z0Q"/>
+</div>
+</div>
+<!-- Rich Text Editor -->
+<div class="space-y-2 pt-2">
+<div class="flex items-center justify-between">
+<label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Content</label>
+</div>
+<div class="border border-gray-200 dark:border-[#393028] rounded-xl overflow-hidden bg-surface-light dark:bg-[#2d241b] flex flex-col min-h-[300px]">
+<!-- Toolbar -->
+<div class="flex items-center gap-1 p-2 border-b border-gray-200 dark:border-[#393028] bg-gray-50 dark:bg-[#251d16] overflow-x-auto">
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Bold">
+<span class="material-symbols-outlined text-xl">format_bold</span>
+</button>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Italic">
+<span class="material-symbols-outlined text-xl">format_italic</span>
+</button>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Underline">
+<span class="material-symbols-outlined text-xl">format_underlined</span>
+</button>
+<div class="w-px h-6 bg-gray-300 dark:bg-[#393028] mx-1"></div>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Bullet List">
+<span class="material-symbols-outlined text-xl">format_list_bulleted</span>
+</button>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Numbered List">
+<span class="material-symbols-outlined text-xl">format_list_numbered</span>
+</button>
+<div class="w-px h-6 bg-gray-300 dark:bg-[#393028] mx-1"></div>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Link">
+<span class="material-symbols-outlined text-xl">link</span>
+</button>
+<button class="p-2 rounded hover:bg-gray-200 dark:hover:bg-[#393028] text-gray-600 dark:text-gray-400 transition-colors" title="Image">
+<span class="material-symbols-outlined text-xl">image</span>
+</button>
+</div>
+<!-- Editor Area -->
+<textarea class="flex-1 w-full p-4 bg-transparent border-none resize-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-400 editor-content" placeholder="Start writing your article here..."></textarea>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Actions -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-background-light dark:bg-background-dark border-t border-gray-200 dark:border-[#393028] z-20">
+<div class="max-w-md mx-auto grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center h-12 rounded-lg border border-gray-300 dark:border-[#54473b] text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-[#2d241b] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 dark:ring-offset-[#221910]">
+                Save Draft
+            </button>
+<button class="flex items-center justify-center h-12 rounded-lg bg-primary text-white font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-orange-900/20 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:ring-offset-[#221910]">
+                Publish Post
+            </button>
+</div>
+<!-- Safe area padding for newer iOS devices -->
+<div class="h-4 w-full"></div>
+</div>
+</body></html>

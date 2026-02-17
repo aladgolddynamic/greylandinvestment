@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Newsletter Manager</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221910",
+                        "surface-dark": "#2d241b",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", // rounded-md approx 6px
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #393028;
+            border-radius: 3px;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .filled-icon {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-neutral-900 dark:text-white font-display antialiased selection:bg-primary selection:text-white">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden pb-20">
+<!-- Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between bg-background-light/90 dark:bg-background-dark/90 px-4 py-3 backdrop-blur-md">
+<h2 class="text-xl font-bold leading-tight tracking-tight">Newsletter Manager</h2>
+<button class="flex items-center justify-center rounded-full p-2 text-neutral-500 hover:bg-neutral-200 dark:text-neutral-400 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</header>
+<!-- Segmented Control -->
+<div class="px-4 py-2">
+<div class="flex h-12 w-full items-center rounded-lg bg-neutral-200 dark:bg-surface-dark p-1">
+<!-- Active Tab: Subscribers -->
+<label class="relative flex h-full flex-1 cursor-pointer items-center justify-center rounded-[calc(0.5rem-4px)] transition-all duration-200 ease-in-out has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:shadow-md">
+<span class="z-10 text-sm font-bold tracking-wide">Subscribers</span>
+<input checked="" class="hidden" name="view_toggle" type="radio" value="subscribers"/>
+</label>
+<!-- Inactive Tab: Campaigns -->
+<label class="relative flex h-full flex-1 cursor-pointer items-center justify-center rounded-[calc(0.5rem-4px)] text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 transition-all duration-200 ease-in-out has-[:checked]:bg-primary has-[:checked]:text-white has-[:checked]:shadow-md">
+<span class="z-10 text-sm font-bold tracking-wide">Campaigns</span>
+<input class="hidden" name="view_toggle" type="radio" value="campaigns"/>
+</label>
+</div>
+</div>
+<!-- Subscribers Content View -->
+<main class="flex flex-col gap-4 px-4 pt-4">
+<!-- Summary & Actions -->
+<div class="flex flex-wrap items-end justify-between gap-2 border-b border-neutral-200 dark:border-white/10 pb-4">
+<div class="flex flex-col">
+<span class="text-sm font-medium text-neutral-500 dark:text-neutral-400">Audience</span>
+<h3 class="text-2xl font-bold tracking-tight">1,240 <span class="text-base font-normal text-neutral-500 dark:text-neutral-400">Total Subscribers</span></h3>
+</div>
+<button class="group flex items-center justify-center gap-2 rounded-lg bg-neutral-200 dark:bg-surface-dark px-4 py-2 text-sm font-bold text-neutral-900 dark:text-white transition-all hover:bg-neutral-300 dark:hover:bg-[#3d3226]">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Export CSV</span>
+</button>
+</div>
+<!-- List Header (Optional sort controls could go here, keeping it clean for now) -->
+<!-- Subscriber List -->
+<div class="flex flex-col gap-3">
+<!-- Item 1 -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white font-bold text-lg" data-alt="Avatar gradient for JD">
+                            JD
+                        </div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">j.doe@example.com</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Joined: Oct 24, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-cover bg-center" data-alt="Portrait of Sarah Smith" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDrmLaK5eJIxWJJxSdbeukjAcHsrg62roppGeCtWDeT5SpzDKc3crc3X44ctDuHTS4QeP2gPmSuFWDeETF44YWcvV02E8muXKilb9PbjWsvw-GIybBvUm2lHMGJIQ-IOCXfx9s9rG-qO44y_JmW-gLVNrHxCB7S3pJBnqj9altFQ7bkL8lOjnJV3Sh9MiHZiGinN_s9bO1WCaFo4Hq3SIFl-q46iot-j5yh88KaPVGpqyUOUu940unZgelqkUyFuv7gGN8lmU_s430');"></div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">sarah.smith@design.co</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Joined: Nov 01, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-orange-400 text-white font-bold text-lg" data-alt="Avatar gradient for MK">
+                            MK
+                        </div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">mike.k@techstart.io</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Joined: Nov 02, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+</div>
+</div>
+<!-- Item 4 (Inactive) -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm opacity-80 transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-cover bg-center grayscale" data-alt="Portrait of Alex Johnson" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBp7iKxqwZYb0WIEfpx2Onu_XRz-ZkWldrbun_vTrxOveFdyfq6LjwMM8X0wCM2l5lq7e0HrW1gwcRfRCQd1yi8fdgBqpVZMmF57z00_fLkG7gPAu8ZwtLt5ykmrC7ZdSsoVB1xhTZcKDrjMRshtpyb68x0qvYfZ_NmkW53xaZVdTUWPob42ReaoPa-kovgYqdA-Xg4vhY6sdzRB8JaNwfCD-Urco8vucVteUKogeqT4FiYHwHCjMk1kxzbLySIKEgHUmWHMdSutSQ');"></div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-500 dark:text-neutral-400 line-through decoration-neutral-500">alex.j@outdated.net</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-500">Unsubscribed: Nov 05, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-neutral-400 dark:bg-neutral-600"></div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white font-bold text-lg" data-alt="Avatar gradient for EL">
+                            EL
+                        </div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">emma.lee@creative.studio</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Joined: Nov 08, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+</div>
+</div>
+<!-- Item 6 -->
+<div class="group flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-3 shadow-sm transition-transform active:scale-[0.99]">
+<div class="flex items-center gap-3 overflow-hidden">
+<div class="h-12 w-12 shrink-0 rounded-full bg-cover bg-center" data-alt="Portrait of Robert Fox" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBQWjndpnWqfmu_lneEeSQSHiHXOcjtRWgzBmSRlLdOx_LYq2jV7ygFI9JViekOZB1zSzxFwF6mo_M6iuGwXi0ZVYeFVjLna5YOSsolbQ0-AqPXURLdlWXP2Ob76n60xJ7LT3Vk2K1SsspVAGy_-Br5ExHyEdP1XX1PAzIOr3AhRc8SvlAI7u5HoMIjBIQJoSs_2p3V0Z1a3HYCc5fD-OLg3nufsD59oC3UYO5q8hhZU4BPk2zf2sPgveI_oJfsTLsFmoRKMPMS7vU');"></div>
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">robert.fox@example.com</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Joined: Nov 10, 2023</p>
+</div>
+</div>
+<div class="shrink-0 pr-1">
+<div class="h-3 w-3 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></div>
+</div>
+</div>
+</div>
+<!-- Conceptual Campaign Preview (Just to show what it would look like based on prompt, visually separated) -->
+<div class="mt-8 flex items-center gap-2 px-1">
+<span class="h-px flex-1 bg-neutral-200 dark:bg-white/10"></span>
+<span class="text-xs uppercase tracking-widest text-neutral-400 dark:text-neutral-600">Recent Campaign</span>
+<span class="h-px flex-1 bg-neutral-200 dark:bg-white/10"></span>
+</div>
+<div class="opacity-70 grayscale transition-all hover:opacity-100 hover:grayscale-0">
+<div class="group relative flex items-center justify-between gap-4 rounded-lg bg-surface-light dark:bg-surface-dark p-4 shadow-sm">
+<div class="flex flex-col justify-center overflow-hidden">
+<p class="truncate text-base font-bold leading-tight text-neutral-900 dark:text-white">Q3 Market Analysis</p>
+<p class="truncate text-xs font-medium text-neutral-500 dark:text-neutral-400">Sent: Yesterday</p>
+</div>
+<div class="flex shrink-0 items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-primary">
+<span class="material-symbols-outlined text-[16px]">visibility</span>
+<span class="text-xs font-bold">42%</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button -->
+<div class="fixed bottom-6 right-6 z-50">
+<button class="flex h-14 w-14 items-center justify-center rounded-full bg-primary shadow-[0_4px_12px_rgba(242,127,13,0.4)] transition-transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-4 focus:ring-primary/30">
+<span class="material-symbols-outlined text-white" style="font-size: 32px;">add</span>
+</button>
+</div>
+</div>
+</body></html>

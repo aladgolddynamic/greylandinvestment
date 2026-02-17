@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Website Footer with Admin Link</title>
+<!-- Fonts and Icons -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f27f0d",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#221910", // Using the theme config dark background
+                        "surface-dark": "#2d241b", // Slightly lighter for contrast
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar to keep it clean */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #221910;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3f352e;
+            border-radius: 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased min-h-screen flex flex-col">
+<!-- Main Content Placeholder (to push footer down conceptually) -->
+<main class="flex-grow p-6 flex items-center justify-center text-center opacity-40">
+<div class="flex flex-col items-center gap-4">
+<span class="material-symbols-outlined text-6xl text-primary/40">construction</span>
+<p class="text-gray-500 dark:text-gray-400">Main website content goes here...</p>
+<p class="text-xs text-gray-400 dark:text-gray-600">Scroll down to view footer</p>
+</div>
+</main>
+<!-- Footer Section -->
+<footer class="w-full bg-[#181411] text-white pt-10 pb-6 rounded-t-3xl shadow-2xl relative overflow-hidden">
+<!-- Decorative Top Border/Highlight -->
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50"></div>
+<div class="px-4 md:px-8 max-w-lg mx-auto flex flex-col gap-10">
+<!-- Newsletter Component -->
+<div class="flex flex-col gap-4 text-center">
+<div class="flex flex-col gap-2">
+<h2 class="text-white text-2xl font-bold leading-tight">
+                        Subscribe to our newsletter
+                    </h2>
+<p class="text-gray-400 text-sm font-normal leading-normal">
+                        Stay updated with our latest news and services.
+                    </p>
+</div>
+<div class="flex w-full justify-center mt-2">
+<label class="flex flex-col w-full h-12">
+<div class="flex w-full items-stretch rounded-lg h-full shadow-sm">
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-l-lg text-white focus:outline-0 focus:ring-1 focus:ring-primary border-none bg-[#393028] h-full placeholder:text-[#baab9c] px-4 text-sm font-normal" placeholder="Email Address" value=""/>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-r-lg h-full px-4 bg-primary text-[#181411] hover:bg-primary/90 transition-colors text-sm font-bold">
+<span>Join</span>
+</button>
+</div>
+</label>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-px bg-[#393028] w-full"></div>
+<!-- Navigation Links Stack -->
+<nav class="flex flex-col gap-0">
+<!-- Branding Header -->
+<div class="pb-4">
+<h3 class="text-primary font-black text-xl tracking-tight uppercase">Company</h3>
+</div>
+<!-- Link Items -->
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">home</span>
+<p class="text-gray-200 text-base font-medium flex-1">Home</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">info</span>
+<p class="text-gray-200 text-base font-medium flex-1">About Us</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">design_services</span>
+<p class="text-gray-200 text-base font-medium flex-1">Services</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">apartment</span>
+<p class="text-gray-200 text-base font-medium flex-1">Projects</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">newspaper</span>
+<p class="text-gray-200 text-base font-medium flex-1">News</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+<a class="group flex items-center gap-4 py-3 border-b border-[#393028]/50 last:border-0 hover:bg-[#393028]/30 transition-colors rounded-lg px-2 -mx-2" href="#">
+<span class="material-symbols-outlined text-primary/70 group-hover:text-primary" style="font-size: 20px;">mail</span>
+<p class="text-gray-200 text-base font-medium flex-1">Contact</p>
+<span class="material-symbols-outlined text-gray-600" style="font-size: 20px;">chevron_right</span>
+</a>
+</nav>
+<!-- Social Media -->
+<div class="flex justify-center gap-4 pt-2">
+<a aria-label="Twitter" class="w-10 h-10 rounded-full bg-[#393028] flex items-center justify-center text-white hover:bg-primary hover:text-black transition-colors" href="#">
+<!-- Abstract social icon representing network -->
+<span class="material-symbols-outlined" style="font-size: 20px;">share</span>
+</a>
+<a aria-label="LinkedIn" class="w-10 h-10 rounded-full bg-[#393028] flex items-center justify-center text-white hover:bg-primary hover:text-black transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">work</span>
+</a>
+<a aria-label="Instagram" class="w-10 h-10 rounded-full bg-[#393028] flex items-center justify-center text-white hover:bg-primary hover:text-black transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-size: 20px;">photo_camera</span>
+</a>
+</div>
+<!-- Bottom Bar: Copyright & Admin Link -->
+<div class="flex flex-col items-center gap-4 pt-6 mt-4 border-t border-[#393028]">
+<p class="text-[#baab9c] text-xs font-normal">
+                    © 2023 Company Name. All Rights Reserved.
+                </p>
+<!-- The Subtle Admin Link -->
+<div class="w-full flex justify-end px-4">
+<a class="text-[#393028] hover:text-[#baab9c] text-[10px] font-medium uppercase tracking-widest transition-colors flex items-center gap-1 opacity-60 hover:opacity-100" href="/admin">
+<span class="material-symbols-outlined" style="font-size: 12px;">lock</span>
+                        Admin
+                    </a>
+</div>
+</div>
+</div>
+<!-- Bottom Safe Area Padding for iOS -->
+<div class="h-6 w-full"></div>
+</footer>
+</body></html>
