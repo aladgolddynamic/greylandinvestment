@@ -7,7 +7,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import CTA from '@/components/CTA';
 import { getServiceBySlugAction } from '@/lib/actions/serviceActions';
-import { ServiceItem } from '@/services/serviceService';
+import { ServiceItem, ServiceFeature } from '@/types/service';
+// ... (omitting react-icons imports for brevity in targetContent match if needed, but I'll use exact match)
+// Wait, I'll just target the lines specifically.
+
 import {
     FaCode, FaCogs, FaProjectDiagram, FaShieldAlt, FaChartBar, FaNetworkWired,
     FaBuilding, FaHardHat, FaTools, FaTruckLoading, FaDesktop, FaBoxOpen,
@@ -139,7 +142,7 @@ export default function ServiceDetail() {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                    {service.features.map((feature, idx) => (
+                                    {service.features.map((feature: ServiceFeature, idx: number) => (
                                         <motion.div
                                             key={feature.id}
                                             initial={{ opacity: 0, y: 20 }}
@@ -179,7 +182,7 @@ export default function ServiceDetail() {
                             <div className="h-1 w-16 bg-primary-orange mx-auto rounded-full"></div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            {service.media.illustrations.map((url, i) => (
+                            {service.media.illustrations.map((url: string, i: number) => (
                                 <div key={i} className="aspect-video rounded-[2rem] overflow-hidden border border-gray-100 shadow-lg">
                                     <img src={url} alt={`Illustration ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
                                 </div>

@@ -13,10 +13,9 @@ import {
 } from 'react-icons/fa';
 import {
     serviceCategoryService,
-    serviceStyleService,
-    ServiceItem,
-    ServiceFeature
+    serviceStyleService
 } from '@/services/serviceService';
+import { ServiceFeature, ServiceItem } from '@/types/service';
 import { createServiceAction, updateServiceAction } from '@/lib/actions/serviceActions';
 import ImageUploadField from '@/components/Admin/ImageUploadField';
 import ServiceGridItem from '@/components/Services/ServiceGridItem';
@@ -111,7 +110,7 @@ export default function ServiceForm({ initialData, isEdit = false }: ServiceForm
     // Auto-generate slug from title ONLY if not editing or if slug is empty
     useEffect(() => {
         if (!isEdit && (!form.slug || form.slug === slugify(form.title).slice(0, -1))) {
-            setForm(prev => ({ ...prev, slug: slugify(prev.title) }));
+            setForm((prev: ServiceItem) => ({ ...prev, slug: slugify(prev.title) }));
         }
     }, [form.title, isEdit]);
 
@@ -133,13 +132,13 @@ export default function ServiceForm({ initialData, isEdit = false }: ServiceForm
     };
 
     const handleFeatureRemove = (id: string) => {
-        setForm({ ...form, features: form.features.filter(f => f.id !== id) });
+        setForm({ ...form, features: form.features.filter((f: ServiceFeature) => f.id !== id) });
     };
 
     const handleFeatureUpdate = (id: string, updates: Partial<ServiceFeature>) => {
         setForm({
             ...form,
-            features: form.features.map(f => f.id === id ? { ...f, ...updates } : f)
+            features: form.features.map((f: ServiceFeature) => f.id === id ? { ...f, ...updates } : f)
         });
     };
 
@@ -313,7 +312,7 @@ export default function ServiceForm({ initialData, isEdit = false }: ServiceForm
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {form.features.map((feat, idx) => (
+                                {form.features.map((feat: ServiceFeature, idx: number) => (
                                     <div key={feat.id} className="p-6 bg-[#F8FAFC] border border-gray-100 rounded-3xl relative group">
                                         <button
                                             onClick={() => handleFeatureRemove(feat.id)}
@@ -418,7 +417,7 @@ export default function ServiceForm({ initialData, isEdit = false }: ServiceForm
                                 <ServiceGridItem
                                     title={form.title || 'Untitled Service Offering'}
                                     category={categories.find(c => c.id === form.category)?.label || 'TECHNOLOGY'}
-                                    bullets={form.features.length > 0 ? form.features.map(f => f.title) : form.bullets}
+                                    bullets={form.features.length > 0 ? form.features.map((f: ServiceFeature) => f.title) : form.bullets}
                                     icon={ICON_COMPONENTS[form.icon] || <FaTools />}
                                     index={0}
                                 />

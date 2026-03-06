@@ -10,7 +10,7 @@ import {
     FaChartPie, FaUserShield, FaSearchPlus, FaFileAlt, FaLock, FaTasks, FaGraduationCap
 } from 'react-icons/fa';
 import { getServicesAction } from '@/lib/actions/serviceActions';
-import { ServiceItem } from '@/services/serviceService';
+import { ServiceItem } from '@/types/service';
 import React, { useState, useEffect } from 'react';
 
 const iconMap: Record<string, React.ReactNode> = {

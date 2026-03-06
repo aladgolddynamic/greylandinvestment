@@ -6,7 +6,7 @@ import {
     deleteServiceAction,
     updateServiceAction
 } from '@/lib/actions/serviceActions';
-import { ServiceItem } from '@/services/serviceService';
+import { ServiceItem } from '@/types/service';
 import { useRouter } from 'next/navigation';
 import { useDebounce } from '@/utils/useDebounce';
 import {
@@ -173,7 +173,7 @@ export default function ServicesManager() {
                             </div>
 
                             <div className="space-y-3 mb-8 flex-1">
-                                {service.bullets.slice(0, 3).map((bullet, idx) => (
+                                {service.bullets.slice(0, 3).map((bullet: string, idx: number) => (
                                     <div key={idx} className="flex gap-3 text-[10px] text-gray-400 font-medium leading-relaxed">
                                         <div className="mt-1 w-1 h-1 rounded-full bg-primary-orange shrink-0"></div>
                                         <p className="line-clamp-2 italic">"{bullet}"</p>

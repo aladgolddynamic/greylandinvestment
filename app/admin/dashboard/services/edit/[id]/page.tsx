@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getServiceByIdAction } from '@/lib/actions/serviceActions';
-import { ServiceItem } from '@/services/serviceService';
+import { ServiceItem } from '@/types/service';
 import ServiceForm from '@/components/Admin/Services/ServiceForm';
 
 export default function EditServicePage() {

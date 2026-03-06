@@ -1,6 +1,7 @@
 'use server';
 
-import { serviceService, ServiceItem } from '@/services/serviceService';
+import { serviceService } from '@/services/serviceService';
+import { ServiceItem } from '@/types/service';
 import { revalidatePath } from 'next/cache';
 
 export async function getServicesAction() {
