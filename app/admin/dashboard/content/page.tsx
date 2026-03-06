@@ -5,7 +5,7 @@ import {
     getContentAction,
     updateContentAction
 } from '@/lib/actions/contentActions';
-import { SiteContent } from '@/services/contentService';
+import { SiteContent } from '@/types/content';
 import {
     FaSave,
     FaHome,

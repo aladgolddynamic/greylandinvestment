@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getProjectByIdAction } from '@/lib/actions/projectActions';
-import { Project } from '@/services/projectService';
+import { Project } from '@/types/project';
 import ProjectForm from '@/components/Admin/Projects/ProjectForm';
 
 export default function EditProjectPage() {

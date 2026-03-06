@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { getJobByIdAction } from '@/lib/actions/careersActions';
-import { Job } from '@/services/careersService';
+import { Job } from '@/types/careers';
 import JobForm from '@/components/Admin/Careers/JobForm';
 
 export default function EditCareerPage() {

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
 import { getCompanyInfoAction } from '@/lib/actions/companyActions';
-import { CompanyInfo } from '@/services/companyService';
+import { CompanyInfo } from '@/types/company';
 
 export default function ContactInfo() {
     const [info, setInfo] = useState<CompanyInfo | null>(null);

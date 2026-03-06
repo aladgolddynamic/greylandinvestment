@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getApprovedCommentsAction } from '@/lib/actions/commentActions';
-import { Comment } from '@/services/commentService';
+import { Comment } from '@/types/comment';
 import CommentCard from './CommentCard';
 import CommentForm from './CommentForm';
 import CommentTrigger from './CommentTrigger';

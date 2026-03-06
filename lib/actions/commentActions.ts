@@ -1,6 +1,7 @@
 'use server';
 
-import { commentService, Comment, CommentStatus, ContentType } from '@/services/commentService';
+import { commentService } from '@/services/commentService';
+import { Comment, CommentStatus, ContentType } from '@/types/comment';
 import { revalidatePath } from 'next/cache';
 
 export async function submitCommentAction(data: Omit<Comment, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'replies'>) {

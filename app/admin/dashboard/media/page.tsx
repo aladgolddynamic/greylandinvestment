@@ -6,7 +6,7 @@ import {
     uploadAssetAction,
     deleteAssetAction
 } from '@/lib/actions/mediaActions';
-import { MediaAsset } from '@/services/mediaService';
+import { MediaAsset } from '@/types/media';
 import {
     FaPlus,
     FaSearch,

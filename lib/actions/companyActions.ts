@@ -1,6 +1,7 @@
 'use server';
 
-import { companyService, CompanyInfo } from '@/services/companyService';
+import { companyService } from '@/services/companyService';
+import { CompanyInfo } from '@/types/company';
 import { revalidatePath } from 'next/cache';
 
 export async function getCompanyInfoAction() {

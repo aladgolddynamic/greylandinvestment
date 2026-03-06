@@ -1,6 +1,7 @@
 'use server';
 
-import { contentService, SiteContent } from '@/services/contentService';
+import { contentService } from '@/services/contentService';
+import { SiteContent } from '@/types/content';
 import { revalidatePath } from 'next/cache';
 
 export async function getContentAction(): Promise<SiteContent> {

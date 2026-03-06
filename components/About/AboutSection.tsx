@@ -6,7 +6,8 @@ import WhoWeAre from './WhoWeAre';
 import AboutWhatWeDo from './AboutWhatWeDo';
 import MissionVision from './MissionVision';
 import OurStrength from './OurStrength';
-import { contentService, SiteContent } from '@/services/contentService';
+import { contentService } from '@/services/contentService';
+import { SiteContent } from '@/types/content';
 
 export default function AboutSection() {
     const [content, setContent] = useState<SiteContent | null>(null);

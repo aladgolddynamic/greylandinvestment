@@ -1,6 +1,7 @@
 'use server';
 
-import { careersService, Job } from '@/services/careersService';
+import { careersService } from '@/services/careersService';
+import { Job } from '@/types/careers';
 import { revalidatePath } from 'next/cache';
 
 export async function getJobsAction() {

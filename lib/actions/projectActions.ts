@@ -1,6 +1,7 @@
 'use server';
 
-import { projectService, Project } from '@/services/projectService';
+import { projectService } from '@/services/projectService';
+import { Project } from '@/types/project';
 import { revalidatePath } from 'next/cache';
 
 export async function getProjectsAction() {

@@ -7,7 +7,7 @@ import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { FaMapMarkerAlt, FaBriefcase, FaClock, FaChevronLeft, FaBuilding, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { useParams } from 'next/navigation';
 import { getJobBySlugAction } from '@/lib/actions/careersActions';
-import { Job } from '@/services/careersService';
+import { Job } from '@/types/careers';
 import ShareNews from '@/components/News/ShareNews';
 import {
     ArticleH2,

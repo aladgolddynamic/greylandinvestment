@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPaperPlane, FaTimes, FaCheckCircle } from 'react-icons/fa';
 import { submitCommentAction } from '@/lib/actions/commentActions';
-import { Comment } from '@/services/commentService';
+import { Comment } from '@/types/comment';
 
 interface CommentFormProps {
     articleId: string;

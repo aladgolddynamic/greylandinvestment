@@ -15,7 +15,7 @@ import {
     deleteUserAction,
     changePasswordAction
 } from '@/lib/actions/userActions';
-import { DashboardUser, UserRole, UserStatus, CreateUserPayload } from '@/services/userService';
+import { DashboardUser, UserRole, UserStatus, CreateUserPayload } from '@/types/user';
 
 // ─── Role Config ─────────────────────────────────────────────────────────────
 const ROLE_CONFIG: Record<UserRole, { label: string; color: string; bg: string }> = {

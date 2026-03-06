@@ -5,7 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import JobCard from '@/components/Careers/JobCard';
 import { getJobsAction } from '@/lib/actions/careersActions';
-import { Job } from '@/services/careersService';
+import { Job } from '@/types/careers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaUsers, FaLightbulb, FaChartLine, FaRocket, FaSearch, FaFilter, FaBriefcase, FaMapMarkerAlt } from 'react-icons/fa';
 

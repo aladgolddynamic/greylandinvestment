@@ -11,7 +11,8 @@ import {
     FaExclamationTriangle, FaSave, FaRocket, FaLayerGroup,
     FaGripLines, FaInfoCircle
 } from 'react-icons/fa';
-import { projectStyleService, Project, ProjectStatus } from '@/services/projectService';
+import { projectStyleService } from '@/services/projectService';
+import { Project, ProjectStatus } from '@/types/project';
 import { createProjectAction, updateProjectAction } from '@/lib/actions/projectActions';
 import ProjectCard from '@/components/Projects/ProjectCard';
 import ImageUploadField from '@/components/Admin/ImageUploadField';

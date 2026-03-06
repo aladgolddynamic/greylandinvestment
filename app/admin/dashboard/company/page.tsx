@@ -5,7 +5,7 @@ import {
     getCompanyInfoAction,
     updateCompanyInfoAction
 } from '@/lib/actions/companyActions';
-import { CompanyInfo } from '@/services/companyService';
+import { CompanyInfo } from '@/types/company';
 import {
     FaSave,
     FaBuilding,

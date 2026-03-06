@@ -6,7 +6,7 @@ import {
     deleteJobAction,
     updateJobAction
 } from '@/lib/actions/careersActions';
-import { Job } from '@/services/careersService';
+import { Job } from '@/types/careers';
 import { useDebounce } from '@/utils/useDebounce';
 import {
     FaPlus,

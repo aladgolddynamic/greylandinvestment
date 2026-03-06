@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { FaUserCircle, FaCheckCircle, FaClock, FaCalendarAlt } from 'react-icons/fa';
-import { Comment } from '@/services/commentService';
+import { Comment } from '@/types/comment';
 
 interface CommentCardProps {
     comment: Comment;

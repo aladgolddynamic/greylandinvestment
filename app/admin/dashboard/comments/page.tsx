@@ -18,7 +18,7 @@ import {
     deleteCommentAction,
     addCompanyReplyAction
 } from '@/lib/actions/commentActions';
-import { Comment, CommentStatus } from '@/services/commentService';
+import { Comment, CommentStatus } from '@/types/comment';
 
 export default function ModerationPage() {
     const [comments, setComments] = useState<Comment[]>([]);

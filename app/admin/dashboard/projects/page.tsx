@@ -7,7 +7,7 @@ import {
     deleteProjectAction,
     updateProjectAction
 } from '@/lib/actions/projectActions';
-import { Project, ProjectStatus } from '@/services/projectService';
+import { Project, ProjectStatus } from '@/types/project';
 import { useDebounce } from '@/utils/useDebounce';
 import {
     FaPlus,

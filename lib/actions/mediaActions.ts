@@ -1,6 +1,7 @@
 'use server';
 
-import { mediaService, MediaAsset } from '@/services/mediaService';
+import { mediaService } from '@/services/mediaService';
+import { MediaAsset } from '@/types/media';
 import { revalidatePath } from 'next/cache';
 
 export async function getAssetsAction(): Promise<MediaAsset[]> {

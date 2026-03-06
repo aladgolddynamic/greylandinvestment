@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { authService, AdminUser } from '@/services/authService';
+import { authService } from '@/services/authService';
+import { AdminUser } from '@/types/user';
 import {
     updateUserAction,
     changePasswordAction,

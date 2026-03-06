@@ -6,7 +6,8 @@ import Footer from '@/components/Footer/Footer';
 import ProjectCard from '@/components/Projects/ProjectCard';
 import { motion } from 'framer-motion';
 import { getProjectsAction } from '@/lib/actions/projectActions';
-import { projectStyleService, Project } from '@/services/projectService';
+import { projectStyleService } from '@/services/projectService';
+import { Project } from '@/types/project';
 import { projectData as initialSections } from '@/constants/projectData';
 
 export default function ProjectsPage() {
