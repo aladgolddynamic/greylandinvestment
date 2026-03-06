@@ -1,0 +1,21 @@
+{
+    "name": "Greyland Investment Ltd",
+    "short_name": "Greyland",
+    "description": "Greyland Investment Ltd provides cutting-edge solutions across Engineering, Technology, and Infrastructure in Nigeria.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#F28C28",
+    "icons": [
+        {
+            "src": "/logo.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/logo.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

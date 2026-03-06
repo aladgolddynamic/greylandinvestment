@@ -3,7 +3,12 @@
 import { motion } from 'framer-motion';
 import { FaBullseye, FaBinoculars } from 'react-icons/fa';
 
-export default function MissionVision() {
+interface MissionVisionProps {
+    mission: string;
+    vision: string;
+}
+
+export default function MissionVision({ mission, vision }: MissionVisionProps) {
     return (
         <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,7 +27,7 @@ export default function MissionVision() {
                             <h3 className="text-2xl font-black text-primary-dark uppercase tracking-tight">Our Mission</h3>
                         </div>
                         <p className="text-gray-600 leading-relaxed font-medium">
-                            To provide reliable, high-quality contracting and supply solutions that exceed client expectations while maintaining professionalism, efficiency, and integrity.
+                            {mission}
                         </p>
                     </motion.div>
 
@@ -41,7 +46,7 @@ export default function MissionVision() {
                             <h3 className="text-2xl font-black uppercase tracking-tight">Our Vision</h3>
                         </div>
                         <p className="text-gray-300 leading-relaxed font-medium">
-                            To be a trusted leader in engineering, contracting, and procurement services, recognized for excellence, innovation, and consistent delivery.
+                            {vision}
                         </p>
                     </motion.div>
                 </div>

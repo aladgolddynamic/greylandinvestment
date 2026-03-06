@@ -6,158 +6,72 @@ import ServiceGridItem from '@/components/Services/ServiceGridItem';
 import { motion } from 'framer-motion';
 import {
     FaCode, FaCogs, FaProjectDiagram, FaShieldAlt, FaChartBar, FaNetworkWired,
-    FaBuilding, FaHardHat, FaTools, FaTruckLoading, FaDesktop, FaBoxOpen, FaWarehouse, FaClipboardCheck
+    FaBuilding, FaHardHat, FaTools, FaTruckLoading, FaDesktop, FaBoxOpen, FaWarehouse, FaClipboardCheck,
+    FaChartPie, FaUserShield, FaSearchPlus, FaFileAlt, FaLock, FaTasks, FaGraduationCap
 } from 'react-icons/fa';
+import { getServicesAction } from '@/lib/actions/serviceActions';
+import { ServiceItem } from '@/services/serviceService';
+import React, { useState, useEffect } from 'react';
+
+const iconMap: Record<string, React.ReactNode> = {
+    FaCode: <FaCode />,
+    FaCogs: <FaCogs />,
+    FaProjectDiagram: <FaProjectDiagram />,
+    FaShieldAlt: <FaShieldAlt />,
+    FaChartBar: <FaChartBar />,
+    FaNetworkWired: <FaNetworkWired />,
+    FaBuilding: <FaBuilding />,
+    FaHardHat: <FaHardHat />,
+    FaTools: <FaTools />,
+    FaTruckLoading: <FaTruckLoading />,
+    FaDesktop: <FaDesktop />,
+    FaBoxOpen: <FaBoxOpen />,
+    FaWarehouse: <FaWarehouse />,
+    FaClipboardCheck: <FaClipboardCheck />,
+    FaChartPie: <FaChartPie />,
+    FaUserShield: <FaUserShield />,
+    FaSearchPlus: <FaSearchPlus />,
+    FaFileAlt: <FaFileAlt />,
+    FaLock: <FaLock />,
+    FaTasks: <FaTasks />,
+    FaGraduationCap: <FaGraduationCap />
+};
 
 export default function ServicesPage() {
-    const technologyServices = [
-        {
-            title: "Software Development",
-            category: "TECHNOLOGY",
-            icon: <FaCode />,
-            bullets: [
-                "Customized software solutions for specific business workflows.",
-                "High scalability for organizational growth and data volume.",
-                "Robust security protecting intellectual property and data."
-            ]
-        },
-        {
-            title: "ERP Solutions",
-            category: "TECHNOLOGY",
-            icon: <FaCogs />,
-            bullets: [
-                "Cloud-based and on-premise ERP implementations.",
-                "Modules for Finance, HR, and Supply Chain Management.",
-                "Real-time data integration and BI reporting."
-            ]
-        },
-        {
-            title: "IT Consultancy",
-            category: "TECHNOLOGY",
-            icon: <FaProjectDiagram />,
-            bullets: [
-                "Structured IT strategies aligned with business goals.",
-                "Cloud migration and infrastructure optimization.",
-                "Cybersecurity implementation roadmaps."
-            ]
-        },
-        {
-            title: "Security & Compliance",
-            category: "TECHNOLOGY",
-            icon: <FaShieldAlt />,
-            bullets: [
-                "Comprehensive risk assessments and gap analysis.",
-                "Ensuring adherence to data protection regulations.",
-                "Actionable recommendations for security posture."
-            ]
-        },
-        {
-            title: "Cybersecurity",
-            category: "TECHNOLOGY",
-            icon: <FaShieldAlt />,
-            bullets: [
-                "Vulnerability identification and security controls.",
-                "Ongoing monitoring to protect systems from threats.",
-                "Business continuity and regulatory compliance."
-            ]
-        },
-        {
-            title: "Data Analytics",
-            category: "TECHNOLOGY",
-            icon: <FaChartBar />,
-            bullets: [
-                "Business intelligence converting raw data into insights.",
-                "Performance tracking and visualization dashboards.",
-                "Strategic decision-making support."
-            ]
-        },
-        {
-            title: "Infra & Networking",
-            category: "TECHNOLOGY",
-            icon: <FaNetworkWired />,
-            bullets: [
-                "Enterprise-grade LAN/WAN system deployment.",
-                "Data center solutions and secure server infrastructure.",
-                "Network security and proactive monitoring."
-            ]
-        }
-    ];
+    const [services, setServices] = useState<ServiceItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const engineeringServices = [
-        {
-            title: "Construction Services",
-            category: "ENGINEERING",
-            icon: <FaBuilding />,
-            bullets: [
-                "Residential, commercial, and institutional projects.",
-                "Emphasis on structural integrity and safety standards.",
-                "Technical precision combined with disciplined supervision."
-            ]
-        },
-        {
-            title: "General Contracting",
-            category: "ENGINEERING",
-            icon: <FaHardHat />,
-            bullets: [
-                "Full-scope contracting including planning and coordination.",
-                "Procurement and supervision across civil and structural works.",
-                "Execution of large-scale infrastructure developments."
-            ]
-        },
-        {
-            title: "Project Management",
-            category: "ENGINEERING",
-            icon: <FaTools />,
-            bullets: [
-                "End-to-end management from planning to monitoring.",
-                "Risk mitigation and budgeting to ensure delivery.",
-                "Strict adherence to project scope, cost, and timelines."
-            ]
-        }
-    ];
+    useEffect(() => {
+        const fetchServices = async () => {
+            const data = await getServicesAction();
+            // Filter only published services for public view
+            setServices(data.filter(s => s.status === 'PUBLISHED'));
+            setLoading(false);
+        };
+        fetchServices();
+    }, []);
 
-    const procurementServices = [
-        {
-            title: "Equipment Procurement",
-            category: "PROCUREMENT",
-            icon: <FaTruckLoading />,
-            bullets: [
-                "Sourcing of high-quality equipment tailored to needs.",
-                "Compliance with industry standards and cost-efficiency.",
-                "Logistics ensuring timely delivery of critical tools."
-            ]
-        },
-        {
-            title: "ICT Equipment Supply",
-            category: "PROCUREMENT",
-            icon: <FaDesktop />,
-            bullets: [
-                "Supply of enterprise-grade ICT hardware and accessories.",
-                "Servers, networking devices, and scalable storage.",
-                "Technological resources for secure operations."
-            ]
-        },
-        {
-            title: "General Supplies",
-            category: "PROCUREMENT",
-            icon: <FaBoxOpen />,
-            bullets: [
-                "Comprehensive supply services across multiple sectors.",
-                "Access to essential materials and operational resources.",
-                "Streamlined procurement for smooth execution."
-            ]
-        },
-        {
-            title: "Facility Management",
-            category: "PROCUREMENT",
-            icon: <FaWarehouse />,
-            bullets: [
-                "Services focused on maintaining operational efficiency.",
-                "Asset longevity, safety compliance, and optimization.",
-                "Support for commercial and institutional environments."
-            ]
-        }
-    ];
+    const getServicesByCategory = (category: ServiceItem['category']) => {
+        return services
+            .filter(s => s.category === category)
+            .map(s => ({
+                ...s,
+                icon: iconMap[s.icon] || <FaTools />
+            }));
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-primary-orange/20 border-t-primary-orange rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    const technologyServices = getServicesByCategory('TECHNOLOGY');
+    const dataProtectionServices = getServicesByCategory('AUDIT & PROTECTION');
+    const engineeringServices = getServicesByCategory('ENGINEERING');
+    const procurementServices = getServicesByCategory('PROCUREMENT');
 
     return (
         <main className="min-h-screen bg-[#F8FAFC]">
@@ -201,7 +115,28 @@ export default function ServicesPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {technologyServices.map((service, index) => (
-                            <ServiceGridItem key={index} index={index} {...service} />
+                            <ServiceGridItem
+                                key={index}
+                                index={index}
+                                {...service}
+                            />
+                        ))}
+                    </div>
+                </section>
+
+                {/* Data Protection & Audit Section */}
+                <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <span className="text-primary-orange font-black text-[10px] uppercase tracking-[0.5em] mb-4 block">Compliance & Insights</span>
+                        <h2 className="text-3xl font-black text-primary-dark uppercase tracking-tight">Data Protection & Compliance Audit</h2>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {dataProtectionServices.map((service, index) => (
+                            <ServiceGridItem
+                                key={index}
+                                index={index}
+                                {...service}
+                            />
                         ))}
                     </div>
                 </section>
@@ -214,7 +149,11 @@ export default function ServicesPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {engineeringServices.map((service, index) => (
-                            <ServiceGridItem key={index} index={index} {...service} />
+                            <ServiceGridItem
+                                key={index}
+                                index={index}
+                                {...service}
+                            />
                         ))}
                     </div>
                 </section>
@@ -227,7 +166,11 @@ export default function ServicesPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {procurementServices.map((service, index) => (
-                            <ServiceGridItem key={index} index={index} {...service} />
+                            <ServiceGridItem
+                                key={index}
+                                index={index}
+                                {...service}
+                            />
                         ))}
                     </div>
                 </section>

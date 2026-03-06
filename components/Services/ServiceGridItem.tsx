@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaArrowRight } from 'react-icons/fa';
+import Link from 'next/link';
 
 interface ServiceGridItemProps {
     title: string;
@@ -9,17 +10,13 @@ interface ServiceGridItemProps {
     bullets: string[];
     icon: React.ReactNode;
     index: number;
+    id?: string;
+    slug?: string;
 }
 
-export default function ServiceGridItem({ title, category, bullets, icon, index }: ServiceGridItemProps) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.05 }}
-            className="group relative bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-white/50 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
-        >
+export default function ServiceGridItem({ title, category, bullets, icon, index, id, slug }: ServiceGridItemProps) {
+    const CardContent = (
+        <>
             {/* Animated Mesh Gradient Background (Subtle) */}
             <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none">
                 <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-primary-orange blur-[120px] rounded-full animate-pulse"></div>
@@ -64,6 +61,36 @@ export default function ServiceGridItem({ title, category, bullets, icon, index 
 
             {/* Glassy Border Glow */}
             <div className="absolute inset-0 rounded-2xl border-2 border-transparent group-hover:border-primary-orange/20 transition-colors pointer-events-none"></div>
+        </>
+    );
+
+    if (slug) {
+        return (
+            <Link href={`/services/${slug}`} className="block h-full">
+                <motion.div
+                    id={id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: index * 0.05 }}
+                    className="group relative h-full bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-white/50 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden cursor-pointer"
+                >
+                    {CardContent}
+                </motion.div>
+            </Link>
+        );
+    }
+
+    return (
+        <motion.div
+            id={id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: index * 0.05 }}
+            className="group relative h-full bg-white/70 backdrop-blur-md rounded-2xl p-8 border border-white/50 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden"
+        >
+            {CardContent}
         </motion.div>
     );
 }

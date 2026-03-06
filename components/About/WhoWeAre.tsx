@@ -3,7 +3,11 @@
 import { motion } from 'framer-motion';
 import { FaCheckCircle } from 'react-icons/fa';
 
-export default function WhoWeAre() {
+interface WhoWeAreProps {
+    content: string;
+}
+
+export default function WhoWeAre({ content }: WhoWeAreProps) {
     const priorities = [
         "Transparent processes",
         "Clear communication",
@@ -30,7 +34,7 @@ export default function WhoWeAre() {
 
                         <div className="space-y-6 text-gray-600">
                             <p className="text-lg md:text-xl font-bold text-primary-dark leading-relaxed">
-                                We are a multi-sector contracting and supply company committed to delivering dependable solutions.
+                                {content}
                             </p>
                             <p className="leading-relaxed">
                                 At our core, we are problem-solvers. From infrastructure development to technical installations, we approach every assignment with precision, integrity, and responsibility.

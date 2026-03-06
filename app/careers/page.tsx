@@ -1,56 +1,48 @@
 'use client';
 
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
 import JobCard from '@/components/Careers/JobCard';
-import { motion } from 'framer-motion';
-import { FaUsers, FaLightbulb, FaChartLine, FaRocket } from 'react-icons/fa';
+import { getJobsAction } from '@/lib/actions/careersActions';
+import { Job } from '@/services/careersService';
+import { motion, AnimatePresence } from 'framer-motion';
+import { FaUsers, FaLightbulb, FaChartLine, FaRocket, FaSearch, FaFilter, FaBriefcase, FaMapMarkerAlt } from 'react-icons/fa';
 
 export default function CareersPage() {
-    const jobs = [
-        {
-            title: "Senior Structural Engineer",
-            department: "Engineering",
-            location: "Abuja, FCT",
-            type: "Full-Time",
-            excerpt: "Join our Engineering & Execution pillar to oversee structural design and integrity for high-impact urban development projects."
-        },
-        {
-            title: "Full-Stack Software Architect",
-            department: "Technology",
-            location: "Lagos / Hybrid",
-            type: "Full-Time",
-            excerpt: "Lead the development of scalable enterprise ERP solutions and secure digital infrastructure for our private and public sector clients."
-        },
-        {
-            title: "Procurement Specialist",
-            department: "Procurement",
-            location: "Nationwide",
-            type: "Contract",
-            excerpt: "Manage strategic sourcing and supply chain logistics for high-value ICT equipment and heavy operational tools."
-        },
-        {
-            title: "Project Management Lead",
-            department: "Project Execution",
-            location: "Port Harcourt",
-            type: "Full-Time",
-            excerpt: "Drive disciplined execution and risk management across diverse infrastructure and facility management contracts."
-        },
-        {
-            title: "Cybersecurity Analyst",
-            department: "Technology",
-            location: "Remote / Abuja",
-            type: "Hybrid",
-            excerpt: "Strengthen our digital security posture by performing vulnerability assessments and managing incident response for government agencies."
-        },
-        {
-            title: "Facility Operations Manager",
-            department: "Support Services",
-            location: "Lagos, Nigeria",
-            type: "Full-Time",
-            excerpt: "Oversee operational efficiency and preventive maintenance for large-scale commercial and institutional complexes."
-        }
-    ];
+    const [jobs, setJobs] = useState<Job[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filters, setFilters] = useState({
+        department: 'All',
+        location: 'All',
+        type: 'All'
+    });
+
+    useEffect(() => {
+        const fetchJobs = async () => {
+            const data = await getJobsAction();
+            setJobs(data.filter(j => j.status === 'OPEN'));
+            setLoading(false);
+        };
+        fetchJobs();
+    }, []);
+
+    const filteredJobs = useMemo(() => {
+        return jobs.filter(job => {
+            const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                job.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesDept = filters.department === 'All' || job.department === filters.department;
+            const matchesLoc = filters.location === 'All' || job.location.includes(filters.location);
+            const matchesType = filters.type === 'All' || job.employmentType === filters.type;
+
+            return matchesSearch && matchesDept && matchesLoc && matchesType;
+        });
+    }, [jobs, searchTerm, filters]);
+
+    const departments = ['All', ...Array.from(new Set(jobs.map(j => j.department)))];
+    const locations = ['All', ...Array.from(new Set(jobs.map(j => j.location.split(',')[0].trim())))];
+    const types = ['All', 'Full-Time', 'Part-Time', 'Contract', 'Internship'];
 
     const values = [
         {
@@ -137,21 +129,80 @@ export default function CareersPage() {
             {/* Open Positions */}
             <section className="py-24 md:py-32 bg-[#F8FAFC]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row justify-between items-center mb-20 gap-8">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-12 gap-8">
                         <div>
                             <h2 className="text-3xl md:text-5xl font-black text-primary-dark uppercase tracking-tight mb-4">Current <span className="text-primary-orange">Openings</span></h2>
                             <p className="text-gray-600 font-bold text-xs md:text-sm uppercase tracking-widest">Explore and find your role in our growing team.</p>
                         </div>
                         <div className="bg-white px-8 py-4 rounded-xl shadow-sm border border-gray-100">
-                            <span className="text-primary-dark font-black text-sm">{jobs.length} Active Roles</span>
+                            <span className="text-primary-dark font-black text-sm">{filteredJobs.length} Active Roles</span>
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
-                        {jobs.map((job, index) => (
-                            <JobCard key={index} index={index} {...job} />
-                        ))}
+                    {/* Search & Filters */}
+                    <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-xl mb-12 flex flex-col md:flex-row gap-6">
+                        <div className="flex-1 relative">
+                            <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                            <input
+                                type="text"
+                                placeholder="Search by job title or keyword..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-12 pr-4 py-4 bg-[#F8FAFC] border border-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-orange/20 font-medium text-primary-dark"
+                            />
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            <select
+                                value={filters.department}
+                                onChange={(e) => setFilters({ ...filters, department: e.target.value })}
+                                className="px-6 py-4 bg-[#F8FAFC] border border-gray-100 rounded-xl focus:outline-none font-black text-[10px] uppercase tracking-widest text-primary-dark cursor-pointer"
+                            >
+                                <option disabled>Department</option>
+                                {departments.map(d => <option key={d} value={d}>{d === 'All' ? 'All Departments' : d}</option>)}
+                            </select>
+                            <select
+                                value={filters.location}
+                                onChange={(e) => setFilters({ ...filters, location: e.target.value })}
+                                className="px-6 py-4 bg-[#F8FAFC] border border-gray-100 rounded-xl focus:outline-none font-black text-[10px] uppercase tracking-widest text-primary-dark cursor-pointer"
+                            >
+                                <option disabled>Location</option>
+                                {locations.map(l => <option key={l} value={l}>{l === 'All' ? 'All Locations' : l}</option>)}
+                            </select>
+                        </div>
                     </div>
+
+                    {loading ? (
+                        <div className="py-20 text-center">
+                            <div className="w-12 h-12 border-4 border-primary-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                            <p className="text-gray-400 font-black text-[10px] uppercase tracking-widest">Hydrating Opportunities...</p>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10">
+                                <AnimatePresence mode="popLayout">
+                                    {filteredJobs.length > 0 ? (
+                                        filteredJobs.map((job, index) => (
+                                            <JobCard key={job.id} index={index} {...job} />
+                                        ))
+                                    ) : (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            className="col-span-full py-20 text-center bg-white rounded-3xl border border-dashed border-gray-200"
+                                        >
+                                            <p className="text-gray-400 font-black text-sm uppercase tracking-widest">No matching roles found.</p>
+                                            <button
+                                                onClick={() => { setSearchTerm(''); setFilters({ department: 'All', location: 'All', type: 'All' }) }}
+                                                className="mt-6 text-primary-orange font-black text-[10px] uppercase tracking-[0.2em] hover:underline"
+                                            >
+                                                Clear all filters
+                                            </button>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </>
+                    )}
 
                     {/* Talent Pool CTA */}
                     <motion.div

@@ -1,8 +1,12 @@
-'use client';
-
+import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function AboutHero() {
+interface AboutHeroProps {
+    title: string;
+    subtitle: string;
+}
+
+export default function AboutHero({ title, subtitle }: AboutHeroProps) {
     return (
         <section className="relative py-24 md:py-32 bg-gradient-to-r from-[#3F4A5A] to-[#5B5F73] overflow-hidden border-b border-white/5 shadow-inner">
             {/* Technical Background Pattern */}
@@ -25,14 +29,20 @@ export default function AboutHero() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
                 >
-                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-sm">
-                        Building Value. <br />
-                        Delivering Confidence. <br />
-                        Creating <span className="text-[#F28C28]">Lasting Impact.</span>
+                    <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight drop-shadow-sm whitespace-pre-line">
+                        {title.split('. ').map((part, i, arr) => (
+                            <React.Fragment key={i}>
+                                {i === arr.length - 1 ? (
+                                    <span className="text-[#F28C28]">{part}</span>
+                                ) : (
+                                    <>{part}. <br /></>
+                                )}
+                            </React.Fragment>
+                        ))}
                     </h1>
                     <div className="mt-8 h-1 w-24 bg-[#F28C28] mx-auto rounded-full"></div>
                     <p className="mt-8 text-sm md:text-base text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed">
-                        An integrated engineering, technology, and contracting firm dedicated to excellence.
+                        {subtitle}
                     </p>
                 </motion.div>
             </div>

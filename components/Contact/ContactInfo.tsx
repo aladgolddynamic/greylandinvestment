@@ -1,17 +1,36 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { FaMapMarkerAlt, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
+import { getCompanyInfoAction } from '@/lib/actions/companyActions';
+import { CompanyInfo } from '@/services/companyService';
 
 export default function ContactInfo() {
-    const info = [
+    const [info, setInfo] = useState<CompanyInfo | null>(null);
+
+    useEffect(() => {
+        const fetchInfo = async () => {
+            const data = await getCompanyInfoAction();
+            setInfo(data);
+        };
+        fetchInfo();
+    }, []);
+
+    if (!info) return null;
+
+    const contactDetails = [
         {
             icon: <FaMapMarkerAlt />,
             label: 'OUR OFFICE',
             content: (
                 <p className="text-gray-600 font-medium leading-relaxed">
-                    Suite 302, Engineering Plaza,<br />
-                    Airport Road, Lugbe, Abuja, Nigeria
+                    {info.address.split(',').map((part, i) => (
+                        <React.Fragment key={i}>
+                            {part.trim()}
+                            {i < info.address.split(',').length - 1 && <br />}
+                        </React.Fragment>
+                    ))}
                 </p>
             )
         },
@@ -20,8 +39,9 @@ export default function ContactInfo() {
             label: 'EMAIL US',
             content: (
                 <div className="space-y-1">
-                    <p className="text-gray-600 font-medium">info@greylandinvestment.com</p>
-                    <p className="text-gray-600 font-medium">support@greylandinvestment.com</p>
+                    {info.emails.map((email, i) => (
+                        <p key={i} className="text-gray-600 font-medium">{email}</p>
+                    ))}
                 </div>
             )
         },
@@ -30,8 +50,9 @@ export default function ContactInfo() {
             label: 'CALL US',
             content: (
                 <div className="space-y-1">
-                    <p className="text-gray-600 font-medium">+234 (0) 803 123 4567</p>
-                    <p className="text-gray-600 font-medium">+234 (0) 901 987 6543</p>
+                    {info.phones.map((phone, i) => (
+                        <p key={i} className="text-gray-600 font-medium">{phone}</p>
+                    ))}
                 </div>
             )
         }
@@ -39,7 +60,7 @@ export default function ContactInfo() {
 
     return (
         <div className="space-y-4 md:space-y-6">
-            {info.map((item, index) => (
+            {contactDetails.map((item, index) => (
                 <motion.div
                     key={index}
                     initial={{ opacity: 0, y: 20 }}

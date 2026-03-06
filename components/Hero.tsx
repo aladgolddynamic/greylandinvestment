@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export default function Hero() {
     return (
@@ -45,20 +46,24 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
                     className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center"
                 >
-                    <motion.button
-                        whileHover={{ scale: 1.1, translateY: -2 }}
-                        whileTap={{ scale: 0.96 }}
-                        className="bg-[#F28C28] hover:bg-[#D9771B] text-white font-black px-10 md:px-12 py-3.5 md:py-4 rounded-sm transition-colors duration-300 shadow-xl hover:shadow-2xl uppercase tracking-widest text-[10px] md:text-xs"
-                    >
-                        Explore Solutions
-                    </motion.button>
-                    <motion.button
-                        whileHover={{ scale: 1.1, translateY: -2, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
-                        whileTap={{ scale: 0.96 }}
-                        className="bg-transparent text-white font-black px-10 md:px-12 py-3.5 md:py-4 rounded-sm border border-white/60 transition-colors duration-300 shadow-lg hover:shadow-xl uppercase tracking-widest text-[10px] md:text-xs"
-                    >
-                        View Projects
-                    </motion.button>
+                    <Link href="/services">
+                        <motion.button
+                            whileHover={{ scale: 1.1, translateY: -2 }}
+                            whileTap={{ scale: 0.96 }}
+                            className="bg-[#F28C28] hover:bg-[#D9771B] text-white font-black px-10 md:px-12 py-3.5 md:py-4 rounded-sm transition-colors duration-300 shadow-xl hover:shadow-2xl uppercase tracking-widest text-[10px] md:text-xs"
+                        >
+                            Explore Solutions
+                        </motion.button>
+                    </Link>
+                    <Link href="/projects">
+                        <motion.button
+                            whileHover={{ scale: 1.1, translateY: -2, backgroundColor: "rgba(255, 255, 255, 0.15)" }}
+                            whileTap={{ scale: 0.96 }}
+                            className="bg-transparent text-white font-black px-10 md:px-12 py-3.5 md:py-4 rounded-sm border border-white/60 transition-colors duration-300 shadow-lg hover:shadow-xl uppercase tracking-widest text-[10px] md:text-xs"
+                        >
+                            View Projects
+                        </motion.button>
+                    </Link>
                 </motion.div>
             </div>
 

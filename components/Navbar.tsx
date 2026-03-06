@@ -1,9 +1,10 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { HiMenu, HiX } from 'react-icons/hi';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Navbar() {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -28,41 +29,38 @@ export default function Navbar() {
   ];
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5 }}
+    <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[#F2F2F2]/95 backdrop-blur-md shadow-md py-2' : 'bg-[#F2F2F2] py-4'
         } text-primary-dark border-b border-gray-200/50`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Logo — priority loaded via next/image */}
           <div className="flex-shrink-0">
             <Link href="/" className="flex items-center">
-              <motion.img
-                whileHover={{ scale: 1.02 }}
+              <Image
                 src="/logo.png"
                 alt="Greyland Investment Ltd."
-                className="h-12 w-auto transition-all"
+                width={120}
+                height={48}
+                priority
+                className="h-12 w-auto transition-transform hover:scale-[1.02]"
+                style={{ width: 'auto' }}
               />
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation — CSS transitions, no mount animation overhead */}
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
-              {navLinks.map((link, index) => (
-                <motion.a
+              {navLinks.map((link) => (
+                <Link
                   key={link.name}
                   href={link.href}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 + 0.3 }}
                   className="text-gray-600 hover:text-primary-orange transition-colors duration-200 px-3 py-2 text-sm font-bold uppercase tracking-wider"
                 >
                   {link.name}
-                </motion.a>
+                </Link>
               ))}
             </div>
           </div>
@@ -80,7 +78,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Navigation */}
+      {/* Mobile Navigation — AnimatePresence only fires on toggle, not on every mount */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -95,7 +93,7 @@ export default function Navbar() {
                   key={link.name}
                   initial={{ x: -20, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.06 }}
                 >
                   <Link
                     href={link.href}
@@ -106,18 +104,19 @@ export default function Navbar() {
                   </Link>
                 </motion.div>
               ))}
-              <motion.button
+              <motion.a
+                href="/contact"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.5 }}
                 className="mt-8 bg-primary-orange text-white font-black px-10 py-4 rounded-sm uppercase tracking-widest text-xs shadow-xl"
               >
                 Get a Quote
-              </motion.button>
+              </motion.a>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </nav>
   );
 }
