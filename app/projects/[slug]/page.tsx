@@ -15,47 +15,35 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  // Await the params in Next 15+ (if using Turbopack Next 16)
   const { slug } = await params;
-  
-  const project = await prisma.project.findUnique({
-    where: { slug },
-  });
 
-  if (!project) {
+  try {
+    const project = await prisma.project.findUnique({ where: { slug } });
+    if (!project) return { title: 'Project Not Found | Greyland Investment Ltd' };
+
+    const metaTitle = project.metaTitle || `${project.title} | Greyland Projects`;
+    const metaDesc = project.metaDescription || project.description;
     return {
-      title: 'Project Not Found | Greyland Investment Ltd',
+      title: metaTitle,
+      description: metaDesc,
+      openGraph: { title: metaTitle, description: metaDesc, images: project.image ? [project.image] : [], type: 'article' },
+      twitter: { card: 'summary_large_image', title: metaTitle, description: metaDesc, images: project.image ? [project.image] : [] },
     };
+  } catch {
+    return { title: 'Greyland Investment Ltd | Projects' };
   }
-
-  // Fallback to basic project title and description if SEO fields are empty
-  const metaTitle = project.metaTitle || `${project.title} | Greyland Projects`;
-  const metaDesc = project.metaDescription || project.description;
-
-  return {
-    title: metaTitle,
-    description: metaDesc,
-    openGraph: {
-      title: metaTitle,
-      description: metaDesc,
-      images: project.image ? [project.image] : [],
-      type: 'article',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: metaTitle,
-      description: metaDesc,
-      images: project.image ? [project.image] : [],
-    },
-  };
 }
+
 
 export default async function ProjectDetailPage({ params }: Props) {
   const { slug } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: { slug },
-  });
+  let project;
+  try {
+    project = await prisma.project.findUnique({ where: { slug } });
+  } catch {
+    notFound();
+  }
 
   if (!project) {
     notFound();

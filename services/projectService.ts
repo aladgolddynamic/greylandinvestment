@@ -35,32 +35,48 @@ class ProjectService {
     }
 
     async getProjects(): Promise<Project[]> {
-        const projects = await prisma.project.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return projects.map(this.mapToProject);
+        try {
+            const projects = await prisma.project.findMany({
+                orderBy: { createdAt: 'desc' }
+            });
+            return projects.map(this.mapToProject);
+        } catch (err) {
+            console.warn('[ProjectService] DB unavailable for getProjects.', err);
+            return [];
+        }
     }
 
     async getProjectBySlug(slug: string): Promise<Project | undefined> {
-        const project = await prisma.project.findUnique({
-            where: { slug }
-        });
-        return project ? this.mapToProject(project) : undefined;
+        try {
+            const project = await prisma.project.findUnique({ where: { slug } });
+            return project ? this.mapToProject(project) : undefined;
+        } catch (err) {
+            console.warn('[ProjectService] DB unavailable for getProjectBySlug.', err);
+            return undefined;
+        }
     }
 
     async getProjectById(id: string): Promise<Project | undefined> {
-        const project = await prisma.project.findUnique({
-            where: { id }
-        });
-        return project ? this.mapToProject(project) : undefined;
+        try {
+            const project = await prisma.project.findUnique({ where: { id } });
+            return project ? this.mapToProject(project) : undefined;
+        } catch (err) {
+            console.warn('[ProjectService] DB unavailable for getProjectById.', err);
+            return undefined;
+        }
     }
 
     async getProjectsByCategory(category: string): Promise<Project[]> {
-        const projects = await prisma.project.findMany({
-            where: { category: category.toUpperCase() },
-            orderBy: { createdAt: 'desc' }
-        });
-        return projects.map(this.mapToProject);
+        try {
+            const projects = await prisma.project.findMany({
+                where: { category: category.toUpperCase() },
+                orderBy: { createdAt: 'desc' }
+            });
+            return projects.map(this.mapToProject);
+        } catch (err) {
+            console.warn('[ProjectService] DB unavailable for getProjectsByCategory.', err);
+            return [];
+        }
     }
 
     async createProject(data: Project): Promise<Project> {
