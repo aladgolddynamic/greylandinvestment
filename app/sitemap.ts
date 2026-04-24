@@ -1,58 +1,71 @@
 import { MetadataRoute } from 'next'
 import { prisma } from '@/lib/prisma'
 
+export const dynamic = 'force-dynamic';
+
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://greylandinvest.com.ng';
 
-  // Fetch dynamic content
-  const projects = await prisma.project.findMany({
-    where: { publicationStatus: 'PUBLISHED' },
-    select: { slug: true, updatedAt: true },
-  });
+  let projectUrls: any[] = [];
+  let newsUrls: any[] = [];
+  let serviceUrls: any[] = [];
+  let careerUrls: any[] = [];
 
-  const news = await prisma.newsArticle.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { slug: true, updatedAt: true },
-  });
+  try {
+    // Fetch dynamic content
+    const projects = await prisma.project.findMany({
+      where: { publicationStatus: 'PUBLISHED' },
+      select: { slug: true, updatedAt: true },
+    });
 
-  const services = await prisma.service.findMany({
-    where: { status: 'PUBLISHED' },
-    select: { slug: true, updatedAt: true },
-  });
+    const news = await prisma.newsArticle.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true, updatedAt: true },
+    });
 
-  const careers = await prisma.career.findMany({
-    where: { status: 'OPEN' },
-    select: { slug: true, updatedAt: true },
-  });
+    const services = await prisma.service.findMany({
+      where: { status: 'PUBLISHED' },
+      select: { slug: true, updatedAt: true },
+    });
 
-  // Map dynamic routes
-  const projectUrls = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.slug}`,
-    lastModified: project.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.8,
-  }));
+    const careers = await prisma.career.findMany({
+      where: { status: 'OPEN' },
+      select: { slug: true, updatedAt: true },
+    });
 
-  const newsUrls = news.map((article) => ({
-    url: `${baseUrl}/news/${article.slug}`,
-    lastModified: article.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+    projectUrls = projects.map((project) => ({
+      url: `${baseUrl}/projects/${project.slug}`,
+      lastModified: project.updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
 
-  const serviceUrls = services.map((service) => ({
-    url: `${baseUrl}/services/${service.slug}`,
-    lastModified: service.updatedAt,
-    changeFrequency: 'monthly' as const,
-    priority: 0.9,
-  }));
+    newsUrls = news.map((article) => ({
+      url: `${baseUrl}/news/${article.slug}`,
+      lastModified: article.updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
 
-  const careerUrls = careers.map((career) => ({
-    url: `${baseUrl}/careers/${career.slug}`,
-    lastModified: career.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
+    serviceUrls = services.map((service) => ({
+      url: `${baseUrl}/services/${service.slug}`,
+      lastModified: service.updatedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.9,
+    }));
+
+    careerUrls = careers.map((career) => ({
+      url: `${baseUrl}/careers/${career.slug}`,
+      lastModified: career.updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.6,
+    }));
+  } catch (error) {
+    console.error('Error generating dynamic sitemap routes:', error);
+  }
+
+  // Static routes (defined below)
 
   // Static routes
   const staticUrls = [
