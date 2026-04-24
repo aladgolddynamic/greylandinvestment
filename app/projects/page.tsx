@@ -11,6 +11,9 @@ export const metadata = {
     description: "Explore our portfolio of technical excellence, structural integrity, and operational efficiency across Engineering, Technology, and Infrastructure.",
 };
 
+export const dynamic = 'force-dynamic';
+
+
 export default async function ProjectsPage() {
     const data = await getProjectsAction();
     const projects = data.filter(p => p.publicationStatus === 'PUBLISHED');

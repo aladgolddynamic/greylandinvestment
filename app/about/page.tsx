@@ -4,6 +4,9 @@ import CTA from '@/components/CTA';
 import Footer from '@/components/Footer/Footer';
 import { contentService } from '@/services/contentService';
 
+export const dynamic = 'force-dynamic';
+
+
 export default async function AboutPage() {
     const content = await contentService.getContent();
 
