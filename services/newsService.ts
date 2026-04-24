@@ -26,24 +26,39 @@ class NewsService {
     }
 
     async getArticles(): Promise<NewsArticle[]> {
-        const articles = await prisma.newsArticle.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return articles.map(this.mapToNewsArticle);
+        try {
+            const articles = await prisma.newsArticle.findMany({
+                orderBy: { createdAt: 'desc' }
+            });
+            return articles.map(this.mapToNewsArticle);
+        } catch (err) {
+            console.warn('[NewsService] DB unavailable for getArticles.', err);
+            return [];
+        }
     }
 
     async getArticleBySlug(slug: string): Promise<NewsArticle | undefined> {
-        const article = await prisma.newsArticle.findUnique({
-            where: { slug }
-        });
-        return article ? this.mapToNewsArticle(article) : undefined;
+        try {
+            const article = await prisma.newsArticle.findUnique({
+                where: { slug }
+            });
+            return article ? this.mapToNewsArticle(article) : undefined;
+        } catch (err) {
+            console.warn('[NewsService] DB unavailable for getArticleBySlug.', err);
+            return undefined;
+        }
     }
 
     async getArticleById(id: string): Promise<NewsArticle | undefined> {
-        const article = await prisma.newsArticle.findUnique({
-            where: { id }
-        });
-        return article ? this.mapToNewsArticle(article) : undefined;
+        try {
+            const article = await prisma.newsArticle.findUnique({
+                where: { id }
+            });
+            return article ? this.mapToNewsArticle(article) : undefined;
+        } catch (err) {
+            console.warn('[NewsService] DB unavailable for getArticleById.', err);
+            return undefined;
+        }
     }
 
     async createArticle(data: NewsArticle): Promise<NewsArticle> {

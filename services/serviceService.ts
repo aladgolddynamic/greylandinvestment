@@ -36,27 +36,42 @@ class ServiceService {
     }
 
     async getServices(): Promise<ServiceItem[]> {
-        const services = await prisma.service.findMany({
-            include: { features: true, illustrations: true },
-            orderBy: { order: 'asc' }
-        });
-        return services.map(this.mapToServiceItem);
+        try {
+            const services = await prisma.service.findMany({
+                include: { features: true, illustrations: true },
+                orderBy: { order: 'asc' }
+            });
+            return services.map(this.mapToServiceItem);
+        } catch (err) {
+            console.warn('[ServiceService] DB unavailable for getServices.', err);
+            return [];
+        }
     }
 
     async getServiceById(id: string): Promise<ServiceItem | undefined> {
-        const service = await prisma.service.findUnique({
-            where: { id },
-            include: { features: true, illustrations: true }
-        });
-        return service ? this.mapToServiceItem(service) : undefined;
+        try {
+            const service = await prisma.service.findUnique({
+                where: { id },
+                include: { features: true, illustrations: true }
+            });
+            return service ? this.mapToServiceItem(service) : undefined;
+        } catch (err) {
+            console.warn('[ServiceService] DB unavailable for getServiceById.', err);
+            return undefined;
+        }
     }
 
     async getServiceBySlug(slug: string): Promise<ServiceItem | undefined> {
-        const service = await prisma.service.findUnique({
-            where: { slug },
-            include: { features: true, illustrations: true }
-        });
-        return service ? this.mapToServiceItem(service) : undefined;
+        try {
+            const service = await prisma.service.findUnique({
+                where: { slug },
+                include: { features: true, illustrations: true }
+            });
+            return service ? this.mapToServiceItem(service) : undefined;
+        } catch (err) {
+            console.warn('[ServiceService] DB unavailable for getServiceBySlug.', err);
+            return undefined;
+        }
     }
 
     async createService(data: ServiceItem): Promise<ServiceItem> {

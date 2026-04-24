@@ -27,24 +27,39 @@ class CareersService {
     }
 
     async getJobs(): Promise<Job[]> {
-        const jobs = await prisma.career.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return jobs.map(this.mapToJob);
+        try {
+            const jobs = await prisma.career.findMany({
+                orderBy: { createdAt: 'desc' }
+            });
+            return jobs.map(this.mapToJob);
+        } catch (err) {
+            console.warn('[CareersService] DB unavailable for getJobs.', err);
+            return [];
+        }
     }
 
     async getJobBySlug(slug: string): Promise<Job | undefined> {
-        const job = await prisma.career.findUnique({
-            where: { slug }
-        });
-        return job ? this.mapToJob(job) : undefined;
+        try {
+            const job = await prisma.career.findUnique({
+                where: { slug }
+            });
+            return job ? this.mapToJob(job) : undefined;
+        } catch (err) {
+            console.warn('[CareersService] DB unavailable for getJobBySlug.', err);
+            return undefined;
+        }
     }
 
     async getJobById(id: string): Promise<Job | undefined> {
-        const job = await prisma.career.findUnique({
-            where: { id }
-        });
-        return job ? this.mapToJob(job) : undefined;
+        try {
+            const job = await prisma.career.findUnique({
+                where: { id }
+            });
+            return job ? this.mapToJob(job) : undefined;
+        } catch (err) {
+            console.warn('[CareersService] DB unavailable for getJobById.', err);
+            return undefined;
+        }
     }
 
     async createJob(data: Job): Promise<Job> {
