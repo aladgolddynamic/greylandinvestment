@@ -4,7 +4,7 @@ import { SiteContent } from '@/types/content';
 const DEFAULT_HOMEPAGE = {
     heroTitle: 'Engineering Excellence. Technology Innovation.',
     heroSubtitle: 'Greyland Investment Ltd delivers integrated engineering, technology, and infrastructure solutions across Nigeria.',
-    featuredNewsId: null,
+    featuredNewsId: '',
 };
 
 const DEFAULT_ABOUT = {
