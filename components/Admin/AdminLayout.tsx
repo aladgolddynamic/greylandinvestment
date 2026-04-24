@@ -58,6 +58,8 @@ const SidebarItem = ({ icon: Icon, label, href, active, collapsed, onClick }: Si
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, isAuthenticated, isLoading } = useAuth();
+    const displayName: string = user?.user_metadata?.name ?? user?.email ?? 'Admin';
+    const displayRole: string = (user?.user_metadata?.role ?? 'ADMIN') as string;
     const pathname = usePathname();
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -134,11 +136,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     {!isCollapsed && (
                         <div className="flex items-center gap-3 px-2 mb-4">
                             <div className="w-8 h-8 rounded-lg bg-primary-orange/20 flex items-center justify-center text-primary-orange text-[10px] font-black">
-                                {user?.name.charAt(0)}
+                                {displayName.charAt(0).toUpperCase()}
                             </div>
                             <div className="flex flex-col truncate">
-                                <span className="text-[10px] font-black uppercase tracking-widest truncate">{user?.name}</span>
-                                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest truncate">{user?.role}</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest truncate">{displayName}</span>
+                                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest truncate">{displayRole.replace('_', ' ')}</span>
                             </div>
                         </div>
                     )}

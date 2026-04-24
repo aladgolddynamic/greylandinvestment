@@ -16,9 +16,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Greyland Investment Ltd | Innovative Technical Solutions",
+  metadataBase: new URL("https://greylandinvest.com.ng"),
+  title: "Greyland Investment Ltd - Consultancy & Supplies",
   description:
-    "Greyland Investment Ltd provides cutting-edge solutions across Engineering, Technology, and Infrastructure in Nigeria.",
+    "Greyland Investment Ltd offers consultancy and supplies services in Abuja, Nigeria. Contact us for reliable business solutions.",
   keywords: [
     "Greyland",
     "infrastructure",
@@ -26,20 +27,23 @@ export const metadata: Metadata = {
     "technology",
     "Nigeria",
     "IT solutions",
+    "consultancy",
+    "supplies",
   ],
   openGraph: {
     type: "website",
     locale: "en_NG",
     siteName: "Greyland Investment Ltd",
-    title: "Greyland Investment Ltd | Innovative Technical Solutions",
+    url: "https://greylandinvest.com.ng",
+    title: "Greyland Investment Ltd - Consultancy & Supplies",
     description:
-      "Enterprise Engineering, Technology, and Infrastructure solutions across public and private sectors.",
+      "Greyland Investment Ltd offers consultancy and supplies services in Abuja, Nigeria. Contact us for reliable business solutions.",
     images: [{ url: "/logo.png", width: 512, height: 512, alt: "Greyland Logo" }],
   },
   twitter: {
     card: "summary",
     title: "Greyland Investment Ltd",
-    description: "Engineering, Technology & Infrastructure Solutions.",
+    description: "Greyland Investment Ltd offers consultancy and supplies services in Abuja, Nigeria. Contact us for reliable business solutions.",
     images: ["/logo.png"],
   },
   manifest: "/manifest.json",
@@ -62,8 +66,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Greyland Investment Ltd",
+    url: "https://greylandinvest.com.ng",
+    email: "info@greylandinvest.com.ng",
+    telephone: "+2348142707974",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "No. 20 Lucky Uwagwu Street",
+      addressLocality: "Lugbe",
+      addressRegion: "Abuja",
+      addressCountry: "NG"
+    }
+  };
+
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${geistSans.variable} antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>

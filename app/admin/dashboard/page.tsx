@@ -70,7 +70,7 @@ export default function DashboardOverview() {
                         Operational <span className="text-primary-orange">Intelligence</span>
                     </h1>
                     <p className="text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em]">
-                        Welcome back, {user?.name} &bull; Remote Terminal Active
+                        Welcome back, {user?.user_metadata?.name ?? user?.email} &bull; Remote Terminal Active
                     </p>
                 </div>
                 <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">

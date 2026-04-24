@@ -1,13 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 import { authService } from '@/services/authService';
-import { AdminUser } from '@/types/user';
-import {
-    updateUserAction,
-    changePasswordAction,
-    verifyCredentialsAction
-} from '@/lib/actions/userActions';
+import { updateUserAction } from '@/lib/actions/userActions';
 import {
     FaUser,
     FaLock,
@@ -23,25 +19,26 @@ import { motion, AnimatePresence } from 'framer-motion';
 type SettingsTab = 'profile' | 'security' | 'preferences';
 
 export default function SettingsManager() {
-    const [user, setUser] = useState<AdminUser | null>(null);
+    const { user, isLoading } = useAuth();
     const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    // Profile State
+    // Profile state — seeded from Supabase user metadata
     const [profileData, setProfileData] = useState({ name: '', email: '' });
 
-    // Security State
+    // Security state
     const [passwords, setPasswords] = useState({ old: '', new: '', confirm: '' });
 
     useEffect(() => {
-        const currentUser = authService.getUser();
-        if (currentUser) {
-            setUser(currentUser);
-            setProfileData({ name: currentUser.name, email: currentUser.email });
+        if (user) {
+            setProfileData({
+                name: user.user_metadata?.name ?? '',
+                email: user.email ?? '',
+            });
         }
-    }, []);
+    }, [user]);
 
     const handleProfileSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,14 +46,14 @@ export default function SettingsManager() {
         setIsSaving(true);
         setError(null);
         try {
-            const updatedUser = await updateUserAction(user.id, profileData);
-            // Sync with local authService for session management
-            authService.setUser({
-                ...user,
-                name: updatedUser.name,
-                email: updatedUser.email
-            });
-            setUser(authService.getUser());
+            // Update the Prisma user record for app-level data
+            await updateUserAction(user.id, { name: profileData.name, email: profileData.email });
+
+            // If email changed, update via Supabase Auth (sends confirmation email)
+            if (profileData.email !== user.email) {
+                await authService.updateEmail(profileData.email);
+            }
+
             setSaveSuccess(true);
             setTimeout(() => setSaveSuccess(false), 3000);
         } catch (err: any) {
@@ -72,17 +69,14 @@ export default function SettingsManager() {
             setError('New passwords do not match.');
             return;
         }
-        if (!user) return;
+        if (!user?.email) return;
         setIsSaving(true);
         setError(null);
         try {
-            // Verify old password first using server action
-            const isVerified = await verifyCredentialsAction(user.email, passwords.old);
-            if (!isVerified) {
-                throw new Error('Invalid existing credentials.');
-            }
-            // If verification succeeds, update to new password
-            await changePasswordAction(user.id, passwords.new);
+            // Verify old password by re-authenticating
+            await authService.verifyCurrentPassword(user.email, passwords.old);
+            // Update password via Supabase Auth
+            await authService.updatePassword(passwords.new);
             setSaveSuccess(true);
             setPasswords({ old: '', new: '', confirm: '' });
             setTimeout(() => setSaveSuccess(false), 3000);
@@ -93,7 +87,9 @@ export default function SettingsManager() {
         }
     };
 
-    if (!user) return null;
+    if (isLoading || !user) return null;
+
+    const role = (user.user_metadata?.role ?? 'ADMIN') as string;
 
     const tabs: { id: SettingsTab; label: string; icon: any }[] = [
         { id: 'profile', label: 'Admin Profile', icon: FaUser },
@@ -122,7 +118,7 @@ export default function SettingsManager() {
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => { setActiveTab(tab.id); setError(null); setSaveSuccess(false); }}
                             className={`flex items-center gap-3 px-4 py-3.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 md:shrink ${activeTab === tab.id
                                 ? 'bg-white text-primary-orange shadow-md border border-gray-100'
                                 : 'text-gray-400 hover:text-primary-dark'
@@ -153,7 +149,7 @@ export default function SettingsManager() {
                                                 type="text"
                                                 value={profileData.name}
                                                 onChange={(e) => setProfileData({ ...profileData, name: e.target.value })}
-                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none"
+                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-orange/10"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -162,13 +158,14 @@ export default function SettingsManager() {
                                                 type="email"
                                                 value={profileData.email}
                                                 onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
-                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none"
+                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-orange/10"
                                             />
+                                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest ml-1">Changing email will send a confirmation link to the new address.</p>
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-primary-dark uppercase tracking-widest ml-1">Current Role Status</label>
                                             <div className="bg-primary-orange/5 border border-primary-orange/10 rounded-xl py-4 px-6">
-                                                <span className="text-[10px] font-black text-primary-orange uppercase tracking-widest">{user.role.replace('_', ' ')}</span>
+                                                <span className="text-[10px] font-black text-primary-orange uppercase tracking-widest">{role.replace('_', ' ')}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -204,7 +201,8 @@ export default function SettingsManager() {
                                                 type="password"
                                                 value={passwords.old}
                                                 onChange={(e) => setPasswords({ ...passwords, old: e.target.value })}
-                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none"
+                                                required
+                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-orange/10"
                                             />
                                         </div>
                                         <div className="h-[2px] bg-gray-50 my-4"></div>
@@ -214,7 +212,9 @@ export default function SettingsManager() {
                                                 type="password"
                                                 value={passwords.new}
                                                 onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
-                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none"
+                                                required
+                                                minLength={8}
+                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-orange/10"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -223,7 +223,8 @@ export default function SettingsManager() {
                                                 type="password"
                                                 value={passwords.confirm}
                                                 onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none"
+                                                required
+                                                className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 px-6 text-sm font-bold text-primary-dark focus:outline-none focus:ring-2 focus:ring-primary-orange/10"
                                             />
                                         </div>
                                     </div>

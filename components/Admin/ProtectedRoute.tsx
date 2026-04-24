@@ -5,8 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
 
 /**
- * ProtectedRoute component secures admin routes.
- * It checks for authentication and redirects to login if not authenticated.
+ * ProtectedRoute — client-side guard that mirrors the server middleware.
+ * Redirects unauthenticated users to /admin/login.
  */
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const { isAuthenticated, isLoading } = useAuth();
@@ -14,14 +14,11 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
     const pathname = usePathname();
 
     useEffect(() => {
-        // Only redirect if not loading and not authenticated
-        // and we're not already on the login page
         if (!isLoading && !isAuthenticated && pathname !== '/admin/login') {
             router.push('/admin/login');
         }
     }, [isAuthenticated, isLoading, router, pathname]);
 
-    // Show loading state while checking authentication
     if (isLoading) {
         return (
             <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
@@ -33,11 +30,9 @@ export default function ProtectedRoute({ children }: { children: ReactNode }) {
         );
     }
 
-    // Only render children if authenticated or on the login page
     if (isAuthenticated || pathname === '/admin/login') {
         return <>{children}</>;
     }
 
-    // Default return null while redirecting
     return null;
 }

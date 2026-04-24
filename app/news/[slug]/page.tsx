@@ -145,22 +145,23 @@ export default function ArticleDetailPage() {
                     <div className="max-w-3xl mx-auto">
                         <div className="article-body">
                             {article.content}
-                            {article.contentBlocks && article.contentBlocks.map(block => {
+                            {article.contentBlocks && article.contentBlocks.map((block, index) => {
+                                const key = block.id || `block-${index}`;
                                 switch (block.type) {
-                                    case 'h2': return <ArticleH2 key={block.id}>{block.content}</ArticleH2>;
-                                    case 'h3': return <ArticleH3 key={block.id}>{block.content}</ArticleH3>;
-                                    case 'paragraph': return <ArticleP key={block.id}>{block.content}</ArticleP>;
-                                    case 'quote': return <ArticleQuote key={block.id}>{block.content}</ArticleQuote>;
+                                    case 'h2': return <ArticleH2 key={key}>{block.content}</ArticleH2>;
+                                    case 'h3': return <ArticleH3 key={key}>{block.content}</ArticleH3>;
+                                    case 'paragraph': return <ArticleP key={key}>{block.content}</ArticleP>;
+                                    case 'quote': return <ArticleQuote key={key}>{block.content}</ArticleQuote>;
                                     case 'callout':
                                         return (
-                                            <ArticleCallout key={block.id} title={block.calloutTitle || 'Note'}>
+                                            <ArticleCallout key={key} title={block.calloutTitle || 'Note'}>
                                                 <p className="m-0">{block.content}</p>
                                             </ArticleCallout>
                                         );
                                     case 'bullet-list':
                                         return (
                                             <ArticleList
-                                                key={block.id}
+                                                key={key}
                                                 type="bullet"
                                                 items={block.content.split('\n').filter(l => l.trim())}
                                             />
@@ -168,12 +169,12 @@ export default function ArticleDetailPage() {
                                     case 'number-list':
                                         return (
                                             <ArticleList
-                                                key={block.id}
+                                                key={key}
                                                 type="number"
                                                 items={block.content.split('\n').filter(l => l.trim())}
                                             />
                                         );
-                                    case 'divider': return <hr key={block.id} className="my-12 border-gray-100" />;
+                                    case 'divider': return <hr key={key} className="my-12 border-gray-100" />;
                                     default: return null;
                                 }
                             })}

@@ -2,14 +2,14 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { authService } from '@/services/authService';
-import { AdminUser } from '@/types/user';
+import { createClient } from '@/lib/supabase/client';
+import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
-    user: AdminUser | null;
-    token: string | null;
+    user: User | null;
+    session: Session | null;
     login: (email: string, password: string) => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
     isLoading: boolean;
     isAuthenticated: boolean;
 }
@@ -17,61 +17,59 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<AdminUser | null>(null);
-    const [token, setToken] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const router = useRouter();
+    const supabase = createClient();
 
     useEffect(() => {
-        // Initialize Auth state from localStorage
-        const savedToken = authService.getToken();
-        const savedUser = authService.getUser();
+        // Get initial session
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            setUser(session?.user ?? null);
+            setIsLoading(false);
+        });
 
-        if (savedToken && savedUser) {
-            setToken(savedToken);
-            setUser(savedUser);
-        }
-        setIsLoading(false);
+        // Listen for auth state changes (login, logout, token refresh)
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            setUser(session?.user ?? null);
+            setIsLoading(false);
+        });
+
+        return () => subscription.unsubscribe();
     }, []);
 
     const login = async (email: string, password: string) => {
         setIsLoading(true);
-        try {
-            const response = await authService.login(email, password);
-
-            // Update state
-            setToken(response.token);
-            setUser(response.user);
-
-            // Persist
-            authService.setToken(response.token);
-            authService.setUser(response.user);
-
-            // Redirect to dashboard
-            router.push('/admin/dashboard');
-        } catch (error) {
-            throw error;
-        } finally {
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
             setIsLoading(false);
+            throw new Error(error.message);
         }
+        router.push('/admin/dashboard');
+        // isLoading is cleared via onAuthStateChange
     };
 
-    const logout = () => {
-        authService.logout();
-        setToken(null);
-        setUser(null);
+    const logout = async () => {
+        await supabase.auth.signOut();
         router.push('/admin/login');
     };
 
     return (
-        <AuthContext.Provider value={{
-            user,
-            token,
-            login,
-            logout,
-            isLoading,
-            isAuthenticated: !!token
-        }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                session,
+                login,
+                logout,
+                isLoading,
+                isAuthenticated: !!session,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     );

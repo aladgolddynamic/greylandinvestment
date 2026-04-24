@@ -1,11 +1,9 @@
-'use client';
-
 import dynamic from 'next/dynamic';
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
+import { contentService } from '@/services/contentService';
 
 // Dynamically import all below-the-fold components
-// Users see the Hero first — these can load as the user scrolls
 const WhyChoose = dynamic(() => import('@/components/WhyChoose'), {
   loading: () => <div className="h-64 animate-pulse bg-gray-100" />,
 });
@@ -17,13 +15,19 @@ const CTA = dynamic(() => import('@/components/CTA'), {
 });
 const Footer = dynamic(() => import('@/components/Footer/Footer'));
 
-export default function Home() {
+export default async function Home() {
+  const content = await contentService.getContent();
+  const homeData = await contentService.getPageContent('homepage');
+
   return (
     <main className="min-h-screen">
       <Navbar />
-      <Hero />
+      <Hero 
+        title={homeData?.heroTitle} 
+        subtitle={homeData?.heroSubtitle} 
+      />
       <WhyChoose />
-      <Stats />
+      <Stats initialStats={homeData?.stats} />
       <CTA />
       <Footer />
     </main>

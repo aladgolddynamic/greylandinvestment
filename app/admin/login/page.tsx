@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaEnvelope, FaLock, FaChevronRight, FaArrowLeft } from 'react-icons/fa';
 
 export default function AdminLoginPage() {
-    const [identifier, setIdentifier] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState<string | null>(null);
     const { login, isLoading } = useAuth();
@@ -16,7 +16,7 @@ export default function AdminLoginPage() {
         setError(null);
 
         try {
-            await login(identifier, password);
+            await login(email, password);
         } catch (err: any) {
             setError(err.message || 'Login failed. Please try again.');
         }
@@ -55,16 +55,16 @@ export default function AdminLoginPage() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* Email Input */}
                         <div className="space-y-2">
-                            <label className="block text-[10px] font-black text-primary-dark uppercase tracking-widest ml-1">Email or Username</label>
+                            <label className="block text-[10px] font-black text-primary-dark uppercase tracking-widest ml-1">Email Address</label>
                             <div className="relative group">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400 group-focus-within:text-primary-orange transition-colors">
                                     <FaEnvelope size={14} />
                                 </div>
                                 <input
-                                    type="text"
-                                    value={identifier}
-                                    onChange={(e) => setIdentifier(e.target.value)}
-                                    placeholder="admin or admin@greyland.com"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="admin@greyland.com"
                                     required
                                     className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-orange/10 focus:border-primary-orange transition-all placeholder:text-gray-300"
                                 />
@@ -82,7 +82,7 @@ export default function AdminLoginPage() {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••shakefire"
+                                    placeholder="••••••••"
                                     required
                                     className="w-full bg-[#F8FAFC] border border-gray-100 rounded-xl py-4 pl-12 pr-4 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-orange/10 focus:border-primary-orange transition-all placeholder:text-gray-300"
                                 />
@@ -133,7 +133,7 @@ export default function AdminLoginPage() {
                 {/* Footer Info */}
                 <div className="mt-8 text-center">
                     <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                        Greyland Investment Ltd. &copy; {new Date().getFullYear()} Digital Sentinel v1.0
+                        Greyland Investment Ltd. &copy; {new Date().getFullYear()} Digital Sentinel v2.0
                     </p>
                 </div>
             </div>

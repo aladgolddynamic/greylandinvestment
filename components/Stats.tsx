@@ -1,10 +1,21 @@
-export default function Stats() {
-    const stats = [
+interface StatItem {
+    label: string;
+    value: string;
+}
+
+interface StatsProps {
+    initialStats?: StatItem[];
+}
+
+export default function Stats({ initialStats }: StatsProps) {
+    const defaultStats = [
         { value: '120+', label: 'TECH SOLUTIONS' },
         { value: '45', label: 'ACTIVE SITES' },
         { value: '300+', label: 'EMPLOYEES' },
         { value: '100%', label: 'CLIENT RETENTION' },
     ];
+
+    const stats = (initialStats && initialStats.length > 0) ? initialStats : defaultStats;
 
     return (
         <section id="projects" className="bg-[#3D405B] py-12 md:py-16">

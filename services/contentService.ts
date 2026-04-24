@@ -1,40 +1,65 @@
+import { prisma } from '@/lib/prisma';
 import { SiteContent } from '@/types/content';
 
 /**
  * ContentService handles generic site content sections.
- * Backend-ready abstraction for dynamic updates.
+ * Fetches dynamic content from the database.
  */
 class ContentService {
-    private CONTENT_DATA: SiteContent = {
-        homepage: {
-            heroTitle: 'Shape the Future with Us',
-            heroSubtitle: 'Build your career at the intersection of Engineering, Technology, and Excellence.',
-            featuredNewsId: 'news-1'
-        },
-        about: {
-            heroHeadline: 'Building Value. Delivering Confidence. Creating Lasting Impact.',
-            heroSubtitle: 'An integrated engineering, technology, and contracting firm dedicated to excellence.',
-            narrative: 'Greyland Investment Ltd is a premier multisectoral firm providing cutting-edge solutions across Engineering, Technology, and Infrastructure.',
-            mission: 'To build the foundation of Nigeria’s infrastructure through disciplined engineering and technological innovation.',
-            vision: 'To be the most trusted partner for large-scale digital and physical infrastructure transformation in Africa.'
-        }
-    };
-
     /**
-     * Get all content
+     * Get specific page content
      */
-    async getContent(): Promise<SiteContent> {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return { ...this.CONTENT_DATA };
+    async getPageContent(pageId: string): Promise<any> {
+        const page = await prisma.pageContent.findUnique({
+            where: { id: pageId }
+        });
+        return page?.data || null;
     }
 
     /**
-     * Update site content (Mock)
+     * Get all content (Legacy support for SiteContent type)
+     */
+    async getContent(): Promise<SiteContent> {
+        const home = await this.getPageContent('homepage');
+        const about = await this.getPageContent('about');
+
+        return {
+            homepage: home || {
+                heroTitle: 'Shape the Future with Us',
+                heroSubtitle: 'Build your career at the intersection of Engineering, Technology, and Excellence.',
+                featuredNewsId: 'news-1'
+            },
+            about: about || {
+                heroHeadline: 'Building Value. Delivering Confidence. Creating Lasting Impact.',
+                heroSubtitle: 'An integrated engineering, technology, and contracting firm dedicated to excellence.',
+                narrative: '',
+                mission: '',
+                vision: ''
+            }
+        };
+    }
+
+    /**
+     * Update site content (bulk or single)
      */
     async updateContent(data: Partial<SiteContent>): Promise<SiteContent> {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        this.CONTENT_DATA = { ...this.CONTENT_DATA, ...data };
-        return { ...this.CONTENT_DATA };
+        if (data.homepage) {
+            await prisma.pageContent.upsert({
+                where: { id: 'homepage' },
+                update: { data: data.homepage as any },
+                create: { id: 'homepage', data: data.homepage as any }
+            });
+        }
+        
+        if (data.about) {
+            await prisma.pageContent.upsert({
+                where: { id: 'about' },
+                update: { data: data.about as any },
+                create: { id: 'about', data: data.about as any }
+            });
+        }
+
+        return this.getContent();
     }
 }
 

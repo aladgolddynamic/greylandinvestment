@@ -2,9 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { FaCheckCircle, FaArrowRight, FaMapMarkerAlt, FaCalendarAlt, FaBriefcase } from 'react-icons/fa';
+import Link from 'next/link';
 
 interface ProjectCardProps {
     title: string;
+    slug: string;
     industry: string;
     duration: string;
     location: string;
@@ -16,6 +18,7 @@ interface ProjectCardProps {
 
 export default function ProjectCard({
     title,
+    slug,
     industry,
     duration,
     location,
@@ -67,7 +70,9 @@ export default function ProjectCard({
                 </div>
 
                 <h3 className="text-2xl font-black text-primary-dark mb-4 leading-tight group-hover:text-primary-orange transition-colors">
-                    {title}
+                    <Link href={`/projects/${slug}`}>
+                        {title}
+                    </Link>
                 </h3>
 
                 <p className="text-gray-600 text-sm font-medium mb-8 leading-relaxed">
@@ -84,12 +89,12 @@ export default function ProjectCard({
                     ))}
                 </div>
 
-                <a
-                    href="/contact"
+                <Link
+                    href={`/projects/${slug}`}
                     className="inline-flex items-center gap-3 text-primary-orange font-black text-[10px] uppercase tracking-[0.2em] group-hover:gap-5 transition-all"
                 >
                     View Case Study <FaArrowRight />
-                </a>
+                </Link>
             </div>
         </motion.div>
     );

@@ -540,7 +540,7 @@ function PreviewTab({ form }: { form: FormState }) {
             </div>
 
             <div className="max-w-sm mx-auto">
-                <ProjectCard {...previewProject} />
+                <ProjectCard {...previewProject} slug="preview-slug" />
             </div>
 
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">

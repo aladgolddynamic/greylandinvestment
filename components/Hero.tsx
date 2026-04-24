@@ -3,7 +3,18 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 
-export default function Hero() {
+interface HeroProps {
+    title?: string;
+    subtitle?: string;
+}
+
+export default function Hero({ title, subtitle }: HeroProps) {
+    const displayTitle = title || "Innovative Technology\nInfrastructure Solutions";
+    const displaySubtitle = subtitle || "Delivering enterprise digital transformation alongside engineering, contracting, and supply services across public and private sectors.";
+
+    // Split title if it contains a newline or use default split
+    const titleParts = displayTitle.split('\n');
+
     return (
         <section
             id="home"
@@ -25,9 +36,13 @@ export default function Hero() {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                 >
                     <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold text-white mb-6 md:mb-8 leading-tight max-w-4xl mx-auto drop-shadow-sm">
-                        Innovative Technology
-                        <br />
-                        <span className="text-[#F28C28]">Infrastructure Solutions</span>
+                        {titleParts[0]}
+                        {titleParts[1] && (
+                            <>
+                                <br />
+                                <span className="text-[#F28C28]">{titleParts[1]}</span>
+                            </>
+                        )}
                     </h1>
                 </motion.div>
 
@@ -37,7 +52,7 @@ export default function Hero() {
                     transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
                     className="text-sm md:text-lg text-[#E5E7EB] mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed font-medium"
                 >
-                    Delivering enterprise digital transformation alongside engineering, contracting, and supply services across public and private sectors.
+                    {displaySubtitle}
                 </motion.p>
 
                 <motion.div

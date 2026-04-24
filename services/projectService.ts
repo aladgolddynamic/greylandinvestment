@@ -123,10 +123,9 @@ class ProjectStyleService {
     // Helper to get categories (mapped to original labels)
     getCategories(): { id: string; label: string; badge: string }[] {
         return [
-            { id: 'tech-digital', label: 'Technology & Digital', badge: 'Innovation Active' },
-            { id: 'engineering-execution', label: 'Engineering & Execution', badge: 'Structural Integrity' },
-            { id: 'procurement-support', label: 'Procurement & Support', badge: 'Operational Excellence' },
-            { id: 'compliance-audit', label: 'Data Protection & Compliance Audit', badge: 'Compliance Ready' },
+            { id: 'TECHNOLOGY_DIGITAL', label: 'Technology & Digital', badge: 'Innovation Active' },
+            { id: 'ENGINEERING_EXECUTION', label: 'Engineering & Execution', badge: 'Structural Integrity' },
+            { id: 'PROCUREMENT_SUPPORT', label: 'Procurement & Support', badge: 'Operational Excellence' },
         ];
     }
 

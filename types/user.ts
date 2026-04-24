@@ -5,21 +5,13 @@ export type UserRole = 'SUPER_ADMIN' | 'EDITOR' | 'MODERATOR';
 export type UserStatus = 'ACTIVE' | 'DISABLED';
 
 /**
- * Admin User Interface
+ * Admin User Interface — derived from Supabase User metadata
  */
 export interface AdminUser {
     id: string;
     name: string;
     email: string;
     role: UserRole;
-}
-
-/**
- * Authentication Response Interface
- */
-export interface AuthResponse {
-    token: string;
-    user: AdminUser;
 }
 
 /**

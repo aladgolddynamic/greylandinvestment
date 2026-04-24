@@ -1,116 +1,45 @@
-import {
-    verifyCredentialsAction,
-    updateUserAction,
-    changePasswordAction
-} from '@/lib/actions/userActions';
-import { AdminUser, AuthResponse } from '@/types/user';
-
+import { createClient } from '@/lib/supabase/client';
 
 /**
- * AuthService provides an abstraction layer for authentication operations.
- * Currently uses mock data integrated with UserService.
+ * AuthService — thin wrapper around Supabase Auth for any
+ * imperative auth operations needed outside of context (e.g., settings page).
  */
 class AuthService {
-    /**
-     * Authenticate user with email and password
-     */
-    async login(identifier: string, password: string): Promise<AuthResponse> {
-        // Use verifyCredentialsAction (Server Action) to verify credentials
-        const user = await verifyCredentialsAction(identifier, password);
-
-        if (user) {
-            return {
-                token: 'mock-jwt-token-greyland-' + Math.random().toString(36).substr(2),
-                user: {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role as any
-                }
-            };
-        }
-
-        throw new Error('Invalid email or password. Please check your credentials.');
+    private get supabase() {
+        return createClient();
     }
 
     /**
-     * Persist token to localStorage
+     * Update the currently signed-in user's email
      */
-    setToken(token: string): void {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('admin_token', token);
-        }
+    async updateEmail(newEmail: string): Promise<void> {
+        const { error } = await this.supabase.auth.updateUser({ email: newEmail });
+        if (error) throw new Error(error.message);
     }
 
     /**
-     * Retrieve token from localStorage
+     * Update the currently signed-in user's password
+     * Supabase handles re-auth internally; the user must already be logged in.
      */
-    getToken(): string | null {
-        if (typeof window !== 'undefined') {
-            return localStorage.getItem('admin_token');
-        }
-        return null;
+    async updatePassword(newPassword: string): Promise<void> {
+        const { error } = await this.supabase.auth.updateUser({ password: newPassword });
+        if (error) throw new Error(error.message);
     }
 
     /**
-     * Remove token from localStorage (Logout)
+     * Re-authenticate (verify) current credentials before sensitive changes.
+     * Uses signInWithPassword against the current email.
      */
-    logout(): void {
-        if (typeof window !== 'undefined') {
-            localStorage.removeItem('admin_token');
-            localStorage.removeItem('admin_user');
-        }
+    async verifyCurrentPassword(email: string, password: string): Promise<void> {
+        const { error } = await this.supabase.auth.signInWithPassword({ email, password });
+        if (error) throw new Error('Invalid existing credentials. Please try again.');
     }
 
     /**
-     * Persist user data to localStorage
+     * Sign out the current user
      */
-    setUser(user: AdminUser): void {
-        if (typeof window !== 'undefined') {
-            localStorage.setItem('admin_user', JSON.stringify(user));
-        }
-    }
-
-    /**
-     * Retrieve user data from localStorage
-     */
-    getUser(): AdminUser | null {
-        if (typeof window !== 'undefined') {
-            const user = localStorage.getItem('admin_user');
-            return user ? JSON.parse(user) : null;
-        }
-        return null;
-    }
-
-    /**
-     * Update user profile (Sync with UserService)
-     */
-    async updateProfile(id: string, data: Partial<AdminUser>): Promise<AdminUser> {
-        await updateUserAction(id, data as any);
-        const currentUser = this.getUser();
-        if (currentUser && currentUser.id === id) {
-            const updatedUser = { ...currentUser, ...data };
-            this.setUser(updatedUser);
-            return updatedUser;
-        }
-        throw new Error('User not found.');
-    }
-
-    /**
-     * Update user password (Sync with UserService)
-     */
-    async updatePassword(oldPass: string, newPass: string): Promise<void> {
-        const currentUser = this.getUser();
-        if (!currentUser) throw new Error('Not authenticated.');
-
-        // Verify old password first using server action
-        try {
-            await verifyCredentialsAction(currentUser.email, oldPass);
-            // If verification succeeds, update to new password
-            await changePasswordAction(currentUser.id, newPass);
-        } catch (err: any) {
-            throw new Error('Verification failed. Invalid existing credentials.');
-        }
+    async signOut(): Promise<void> {
+        await this.supabase.auth.signOut();
     }
 }
 

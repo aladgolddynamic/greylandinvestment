@@ -19,7 +19,7 @@ export interface ProjectSection {
 
 export const projectData: ProjectSection[] = [
     {
-        id: "tech-digital",
+        id: "TECHNOLOGY_DIGITAL",
         number: "01",
         title: "Technology & Digital",
         themeStatement: "Delivering secure, scalable, and performance-driven digital systems.",
@@ -36,7 +36,7 @@ export const projectData: ProjectSection[] = [
                     "Data migration & integration",
                     "User training & compliance setup"
                 ],
-                image: "/projects/tech_erp.png"
+                image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Cybersecurity Infrastructure Upgrade",
@@ -49,7 +49,7 @@ export const projectData: ProjectSection[] = [
                     "Network segmentation",
                     "Continuous monitoring deployment"
                 ],
-                image: "/projects/tech_security.png"
+                image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Business Intelligence Dashboard",
@@ -62,12 +62,12 @@ export const projectData: ProjectSection[] = [
                     "Performance analytics",
                     "Cloud deployment"
                 ],
-                image: "/projects/tech_bi.png"
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop"
             }
         ]
     },
     {
-        id: "engineering-execution",
+        id: "ENGINEERING_EXECUTION",
         number: "02",
         title: "Engineering & Execution",
         themeStatement: "Delivering structural integrity and disciplined execution.",
@@ -84,7 +84,7 @@ export const projectData: ProjectSection[] = [
                     "Project supervision",
                     "Regulatory compliance management"
                 ],
-                image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1200&auto=format&fit=crop"
+                image: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Institutional Facility Construction",
@@ -97,7 +97,7 @@ export const projectData: ProjectSection[] = [
                     "Mechanical & electrical integration",
                     "Quality assurance monitoring"
                 ],
-                image: "https://images.unsplash.com/photo-1541913057-07447195c960?q=80&w=1200&auto=format&fit=crop"
+                image: "https://images.unsplash.com/photo-1503387762-592dea58ef21?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Infrastructure Rehabilitation",
@@ -106,15 +106,16 @@ export const projectData: ProjectSection[] = [
                 location: "Ogun State",
                 description: "Managed rehabilitation and upgrade of critical infrastructure systems.",
                 deliverables: [
+                    "Procurement coordination",
                     "Risk management",
                     "On-time delivery execution"
                 ],
-                image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1200&auto=format&fit=crop"
+                image: "https://images.unsplash.com/photo-1541888946425-d81bb19480c5?q=80&w=1000&auto=format&fit=crop"
             }
         ]
     },
     {
-        id: "procurement-support",
+        id: "PROCUREMENT_SUPPORT",
         number: "03",
         title: "Procurement & Support",
         themeStatement: "Ensuring operational efficiency through structured systems.",
@@ -131,7 +132,7 @@ export const projectData: ProjectSection[] = [
                     "Installation & configuration",
                     "Post-deployment support"
                 ],
-                image: "https://images.unsplash.com/photo-1558489580-f8ca7800052a?q=80&w=1200&auto=format&fit=crop"
+                image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Large-Scale Equipment Procurement",
@@ -144,7 +145,7 @@ export const projectData: ProjectSection[] = [
                     "Cost optimization",
                     "Compliance assurance"
                 ],
-                image: "https://images.unsplash.com/photo-1579412691970-d9d300057018?q=80&w=1200&auto=format&fit=crop"
+                image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1000&auto=format&fit=crop"
             },
             {
                 title: "Facility Management Contract",
@@ -157,55 +158,7 @@ export const projectData: ProjectSection[] = [
                     "Safety compliance audits",
                     "Asset performance monitoring"
                 ],
-                image: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?q=80&w=1200&auto=format&fit=crop"
-            }
-        ]
-    },
-    {
-        id: "compliance-audit",
-        number: "04",
-        title: "Data Protection & Compliance Audit",
-        themeStatement: "Ensuring regulatory adherence and robust data governance.",
-        badgeText: "Compliance Ready",
-        projects: [
-            {
-                title: "Data Privacy Compliance Audit",
-                industry: "Healthcare Sector",
-                duration: "5 Months",
-                location: "Lagos, Nigeria",
-                description: "Conducted a comprehensive audit of data handling processes to ensure GDPR and local privacy compliance.",
-                deliverables: [
-                    "Compliance gap report",
-                    "Privacy impact assessment",
-                    "Framework implementation"
-                ],
-                image: "/projects/compliance_audit.png"
-            },
-            {
-                title: "Security Risk & Vulnerability Assessment",
-                industry: "Energy Sector",
-                duration: "3 Months",
-                location: "Port Harcourt",
-                description: "Executed a deep-dive security assessment of critical industrial control systems.",
-                deliverables: [
-                    "Vulnerability mapping",
-                    "Threat modeling",
-                    "Mitigation roadmap"
-                ],
-                image: "/projects/compliance_risk.png"
-            },
-            {
-                title: "Policy & Governance Framework",
-                industry: "Multi-national Corp",
-                duration: "6 Months",
-                location: "Abuja, FCT",
-                description: "Developed and deployed enterprise-wide data governance and security policies.",
-                deliverables: [
-                    "Custom policy documentation",
-                    "Stakeholder alignment",
-                    "Compliance monitoring setup"
-                ],
-                image: "/projects/compliance_gap.png"
+                image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1000&auto=format&fit=crop"
             }
         ]
     }
