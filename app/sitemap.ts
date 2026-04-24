@@ -12,57 +12,63 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let serviceUrls: any[] = [];
   let careerUrls: any[] = [];
 
-  try {
-    // Fetch dynamic content
-    const projects = await prisma.project.findMany({
-      where: { publicationStatus: 'PUBLISHED' },
-      select: { slug: true, updatedAt: true },
-    });
+  // Prevent Vercel from crashing during the static build phase by skipping the DB fetch
+  // if the database is unreachable or if we are explicitly in a CI/build environment.
+  const isBuildPhase = process.env.CI || process.env.npm_lifecycle_event === 'build';
 
-    const news = await prisma.newsArticle.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { slug: true, updatedAt: true },
-    });
+  if (!isBuildPhase) {
+    try {
+      // Fetch dynamic content
+      const projects = await prisma.project.findMany({
+        where: { publicationStatus: 'PUBLISHED' },
+        select: { slug: true, updatedAt: true },
+      });
 
-    const services = await prisma.service.findMany({
-      where: { status: 'PUBLISHED' },
-      select: { slug: true, updatedAt: true },
-    });
+      const news = await prisma.newsArticle.findMany({
+        where: { status: 'PUBLISHED' },
+        select: { slug: true, updatedAt: true },
+      });
 
-    const careers = await prisma.career.findMany({
-      where: { status: 'OPEN' },
-      select: { slug: true, updatedAt: true },
-    });
+      const services = await prisma.service.findMany({
+        where: { status: 'PUBLISHED' },
+        select: { slug: true, updatedAt: true },
+      });
 
-    projectUrls = projects.map((project) => ({
-      url: `${baseUrl}/projects/${project.slug}`,
-      lastModified: project.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.8,
-    }));
+      const careers = await prisma.career.findMany({
+        where: { status: 'OPEN' },
+        select: { slug: true, updatedAt: true },
+      });
 
-    newsUrls = news.map((article) => ({
-      url: `${baseUrl}/news/${article.slug}`,
-      lastModified: article.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.7,
-    }));
+      projectUrls = projects.map((project) => ({
+        url: `${baseUrl}/projects/${project.slug}`,
+        lastModified: project.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      }));
 
-    serviceUrls = services.map((service) => ({
-      url: `${baseUrl}/services/${service.slug}`,
-      lastModified: service.updatedAt,
-      changeFrequency: 'monthly' as const,
-      priority: 0.9,
-    }));
+      newsUrls = news.map((article) => ({
+        url: `${baseUrl}/news/${article.slug}`,
+        lastModified: article.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+      }));
 
-    careerUrls = careers.map((career) => ({
-      url: `${baseUrl}/careers/${career.slug}`,
-      lastModified: career.updatedAt,
-      changeFrequency: 'weekly' as const,
-      priority: 0.6,
-    }));
-  } catch (error) {
-    console.error('Error generating dynamic sitemap routes:', error);
+      serviceUrls = services.map((service) => ({
+        url: `${baseUrl}/services/${service.slug}`,
+        lastModified: service.updatedAt,
+        changeFrequency: 'monthly' as const,
+        priority: 0.9,
+      }));
+
+      careerUrls = careers.map((career) => ({
+        url: `${baseUrl}/careers/${career.slug}`,
+        lastModified: career.updatedAt,
+        changeFrequency: 'weekly' as const,
+        priority: 0.6,
+      }));
+    } catch (error) {
+      console.error('Error generating dynamic sitemap routes:', error);
+    }
   }
 
   // Static routes (defined below)
