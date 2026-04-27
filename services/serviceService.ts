@@ -1,13 +1,13 @@
-import { prisma } from '@/lib/prisma';
-import { Service as DbService, ServiceFeature as DbFeature } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { randomUUID } from 'crypto';
 
 import { ServiceFeature, ServiceCategory, ServiceItem } from '@/types/service';
 
 /**
- * ServiceService handles the CRUD operations and persistence for services using Prisma.
+ * ServiceService handles the CRUD operations and persistence for services using Supabase.
  */
 class ServiceService {
-    private mapToServiceItem(service: DbService & { features: DbFeature[], illustrations: { url: string }[] }): ServiceItem {
+    private mapToServiceItem(service: any, features: any[], illustrations: any[]): ServiceItem {
         return {
             id: service.id,
             title: service.title,
@@ -16,7 +16,7 @@ class ServiceService {
             fullDescription: service.fullDescription,
             category: service.category as ServiceCategory,
             icon: service.icon,
-            features: service.features.map((f: any) => ({
+            features: (features || []).map((f: any) => ({
                 id: f.id,
                 title: f.title,
                 description: f.description,
@@ -24,37 +24,48 @@ class ServiceService {
             })),
             media: {
                 banner: service.banner || '',
-                illustrations: service.illustrations.map(i => i.url)
+                illustrations: (illustrations || []).map((i: any) => i.url)
             },
-            bullets: service.features.map(f => f.description),
+            bullets: (features || []).map((f: any) => f.description),
             featured: service.featured,
             order: service.order,
             status: service.status as 'DRAFT' | 'PUBLISHED',
-            createdAt: service.createdAt.toISOString(),
-            updatedAt: service.updatedAt.toISOString()
+            createdAt: service.createdAt ? new Date(service.createdAt).toISOString() : new Date().toISOString(),
+            updatedAt: service.updatedAt ? new Date(service.updatedAt).toISOString() : new Date().toISOString()
         };
+    }
+
+    private async fetchRelations(serviceId: string) {
+        const [featRes, illRes] = await Promise.all([
+            supabaseAdmin.from('ServiceFeature').select('*').eq('serviceId', serviceId),
+            supabaseAdmin.from('ServiceIllustration').select('*').eq('serviceId', serviceId)
+        ]);
+        return { features: featRes.data || [], illustrations: illRes.data || [] };
     }
 
     async getServices(): Promise<ServiceItem[]> {
         try {
-            const services = await prisma.service.findMany({
-                include: { features: true, illustrations: true },
-                orderBy: { order: 'asc' }
-            });
-            return services.map(this.mapToServiceItem);
+            const { data, error } = await supabaseAdmin.from('Service').select('*').order('order', { ascending: true });
+            if (error) throw error;
+            const results: ServiceItem[] = [];
+            for (const svc of (data || [])) {
+                const { features, illustrations } = await this.fetchRelations(svc.id);
+                results.push(this.mapToServiceItem(svc, features, illustrations));
+            }
+            return results;
         } catch (err) {
-            console.warn('[ServiceService] DB unavailable for getServices.', err);
+            console.error('[ServiceService] Error in getServices:', err);
             return [];
         }
     }
 
     async getServiceById(id: string): Promise<ServiceItem | undefined> {
         try {
-            const service = await prisma.service.findUnique({
-                where: { id },
-                include: { features: true, illustrations: true }
-            });
-            return service ? this.mapToServiceItem(service) : undefined;
+            const { data, error } = await supabaseAdmin.from('Service').select('*').eq('id', id).single();
+            if (error) throw error;
+            if (!data) return undefined;
+            const { features, illustrations } = await this.fetchRelations(data.id);
+            return this.mapToServiceItem(data, features, illustrations);
         } catch (err) {
             console.warn('[ServiceService] DB unavailable for getServiceById.', err);
             return undefined;
@@ -63,11 +74,11 @@ class ServiceService {
 
     async getServiceBySlug(slug: string): Promise<ServiceItem | undefined> {
         try {
-            const service = await prisma.service.findUnique({
-                where: { slug },
-                include: { features: true, illustrations: true }
-            });
-            return service ? this.mapToServiceItem(service) : undefined;
+            const { data, error } = await supabaseAdmin.from('Service').select('*').eq('slug', slug).single();
+            if (error) throw error;
+            if (!data) return undefined;
+            const { features, illustrations } = await this.fetchRelations(data.id);
+            return this.mapToServiceItem(data, features, illustrations);
         } catch (err) {
             console.warn('[ServiceService] DB unavailable for getServiceBySlug.', err);
             return undefined;
@@ -75,76 +86,64 @@ class ServiceService {
     }
 
     async createService(data: ServiceItem): Promise<ServiceItem> {
-        const service = await prisma.service.create({
-            data: {
-                title: data.title,
-                slug: data.slug,
-                shortDescription: data.shortDescription,
-                fullDescription: data.fullDescription,
-                category: data.category,
-                icon: data.icon,
-                featured: data.featured || false,
-                order: data.order || 0,
-                status: data.status,
-                banner: data.media.banner,
-                illustrations: {
-                    create: (data.media.illustrations || []).map(url => ({ url }))
-                },
-                features: {
-                    create: data.features.map((f: ServiceFeature) => ({
-                        title: f.title,
-                        description: f.description,
-                        icon: f.icon
-                    }))
-                }
-            },
-            include: { features: true, illustrations: true }
-        });
-        return this.mapToServiceItem(service);
+        const { data: service, error } = await supabaseAdmin.from('Service').insert([{
+            id: randomUUID(),
+            title: data.title, slug: data.slug, shortDescription: data.shortDescription,
+            fullDescription: data.fullDescription, category: data.category, icon: data.icon,
+            featured: data.featured || false, order: data.order || 0, status: data.status,
+            banner: data.media.banner
+        }]).select().single();
+        if (error) throw error;
+
+        // Insert features
+        if (data.features?.length) {
+            await supabaseAdmin.from('ServiceFeature').insert(
+                data.features.map((f: ServiceFeature) => ({ id: randomUUID(), serviceId: service.id, title: f.title, description: f.description, icon: f.icon }))
+            );
+        }
+        // Insert illustrations
+        if (data.media.illustrations?.length) {
+            await supabaseAdmin.from('ServiceIllustration').insert(
+                data.media.illustrations.map((url: string) => ({ id: randomUUID(), serviceId: service.id, url }))
+            );
+        }
+
+        const { features, illustrations } = await this.fetchRelations(service.id);
+        return this.mapToServiceItem(service, features, illustrations);
     }
 
     async updateService(id: string, data: Partial<ServiceItem>): Promise<ServiceItem> {
-        // Explicitly exclude fields that are NOT in the Prisma schema for the 'Service' model
-        // features is handled separately, bullets/media are UI/legacy fields
-        // id, createdAt, updatedAt should not be in the data payload
         const { features, bullets, media, id: _id, createdAt, updatedAt, ...rest } = data;
         const updateData: any = { ...rest };
+        if (media) updateData.banner = media.banner;
 
-        if (media) {
-            updateData.banner = media.banner;
-            if (media.illustrations) {
-                // Simplistic illustrations update: delete all and recreate
-                await prisma.serviceIllustration.deleteMany({ where: { serviceId: id } });
-                updateData.illustrations = {
-                    create: media.illustrations.map(url => ({ url }))
-                };
-            }
+        const { data: service, error } = await supabaseAdmin.from('Service').update(updateData).eq('id', id).select().single();
+        if (error) throw error;
+
+        if (media?.illustrations) {
+            await supabaseAdmin.from('ServiceIllustration').delete().eq('serviceId', id);
+            await supabaseAdmin.from('ServiceIllustration').insert(
+                media.illustrations.map((url: string) => ({ serviceId: id, url }))
+            );
         }
 
         if (features) {
-            // Simplistic feature update: delete all and recreate
-            await prisma.serviceFeature.deleteMany({ where: { serviceId: id } });
-            updateData.features = {
-                create: features.map((f: ServiceFeature) => ({
-                    title: f.title,
-                    description: f.description,
-                    icon: f.icon
-                }))
-            };
+            await supabaseAdmin.from('ServiceFeature').delete().eq('serviceId', id);
+            await supabaseAdmin.from('ServiceFeature').insert(
+                features.map((f: ServiceFeature) => ({ serviceId: id, title: f.title, description: f.description, icon: f.icon }))
+            );
         }
 
-        const service = await prisma.service.update({
-            where: { id },
-            data: updateData,
-            include: { features: true, illustrations: true }
-        });
-        return this.mapToServiceItem(service);
+        const rels = await this.fetchRelations(id);
+        return this.mapToServiceItem(service, rels.features, rels.illustrations);
     }
 
     async deleteService(id: string): Promise<void> {
-        await prisma.service.delete({
-            where: { id }
-        });
+        // Delete related records first (cascade may handle this, but explicit is safer)
+        await supabaseAdmin.from('ServiceFeature').delete().eq('serviceId', id);
+        await supabaseAdmin.from('ServiceIllustration').delete().eq('serviceId', id);
+        const { error } = await supabaseAdmin.from('Service').delete().eq('id', id);
+        if (error) throw error;
     }
 }
 

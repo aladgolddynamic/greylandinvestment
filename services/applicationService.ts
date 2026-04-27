@@ -1,13 +1,13 @@
-import { prisma } from '@/lib/prisma';
-import { Application as DbApplication } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { randomUUID } from 'crypto';
 import { JobApplication } from '@/types/application';
 
 class ApplicationService {
-    private mapToApplication(dbApp: DbApplication): JobApplication {
+    private mapToApplication(dbApp: any): JobApplication {
         return {
             id: dbApp.id,
             jobId: dbApp.careerId,
-            jobTitle: '', // This might need to be joined or fetched separately for full accuracy
+            jobTitle: '', // Needs to be joined or fetched separately for full accuracy
             fullName: dbApp.fullName,
             email: dbApp.email,
             phone: dbApp.phone,
@@ -20,20 +20,24 @@ class ApplicationService {
             },
             portfolioLink: dbApp.portfolioLink || undefined,
             status: dbApp.status as any,
-            createdAt: dbApp.createdAt.toISOString()
+            createdAt: dbApp.createdAt ? new Date(dbApp.createdAt).toISOString() : new Date().toISOString()
         };
     }
 
     async getApplications(): Promise<JobApplication[]> {
-        const apps = await prisma.application.findMany({
-            orderBy: { createdAt: 'desc' }
-        });
-        return apps.map(this.mapToApplication.bind(this));
+        const { data, error } = await supabaseAdmin
+            .from('Application')
+            .select('*')
+            .order('createdAt', { ascending: false });
+        if (error) throw error;
+        return (data || []).map(this.mapToApplication.bind(this));
     }
 
     async submitApplication(data: Omit<JobApplication, 'id' | 'status' | 'createdAt'>): Promise<JobApplication> {
-        const app = await prisma.application.create({
-            data: {
+        const { data: app, error } = await supabaseAdmin
+            .from('Application')
+            .insert([{
+                id: randomUUID(),
                 careerId: data.jobId,
                 fullName: data.fullName,
                 email: data.email,
@@ -44,25 +48,33 @@ class ApplicationService {
                 cvType: data.cvFile?.type,
                 cvData: data.cvFile?.data,
                 portfolioLink: data.portfolioLink,
-                status: 'NEW'
-            }
-        });
-
+                status: 'NEW',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            }])
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToApplication(app);
     }
 
     async updateApplicationStatus(id: string, status: JobApplication['status']): Promise<JobApplication> {
-        const app = await prisma.application.update({
-            where: { id },
-            data: { status }
-        });
+        const { data: app, error } = await supabaseAdmin
+            .from('Application')
+            .update({ status })
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToApplication(app);
     }
 
     async deleteApplication(id: string): Promise<void> {
-        await prisma.application.delete({
-            where: { id }
-        });
+        const { error } = await supabaseAdmin
+            .from('Application')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 }
 

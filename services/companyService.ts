@@ -1,9 +1,9 @@
-import { prisma } from '@/lib/prisma';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 import { CompanyInfo } from '@/types/company';
 
 /**
- * CompanyService handles site-wide corporate metadata and branding using Prisma.
+ * CompanyService handles site-wide corporate metadata and branding using Supabase.
  */
 class CompanyService {
     private DEFAULT_DATA: CompanyInfo = {
@@ -26,7 +26,7 @@ class CompanyService {
             secondaryColor: '#0F1C2E',
         },
         metadata: {
-            mission: 'To build the foundation of Nigeria’s infrastructure through disciplined engineering and technological innovation.',
+            mission: "To build the foundation of Nigeria's infrastructure through disciplined engineering and technological innovation.",
             vision: 'To be the most trusted partner for large-scale digital and physical infrastructure transformation in Africa.',
             operatingHours: 'Mon - Fri: 8:00 AM - 5:00 PM',
         },
@@ -38,59 +38,61 @@ class CompanyService {
     };
 
     /**
-     * Get all company information from Prisma
+     * Get all company information from Supabase
      */
     async getInfo(): Promise<CompanyInfo> {
-        const info = await prisma.companyInfo.findUnique({
-            where: { id: 'singleton' }
-        });
+        try {
+            const { data: info, error } = await supabaseAdmin
+                .from('CompanyInfo')
+                .select('*')
+                .eq('id', 'singleton')
+                .single();
+            if (error) throw error;
 
-        if (!info) return this.DEFAULT_DATA;
+            if (!info) return this.DEFAULT_DATA;
 
-        return {
-            name: info.name,
-            tagline: info.tagline,
-            description: info.description,
-            address: info.address,
-            emails: [info.email], // Simplified for now since schema has single email
-            phones: [info.phone], // Simplified
-            socials: info.socialLinks as any,
-            branding: this.DEFAULT_DATA.branding, // Placeholder if branding not in schema
-            metadata: {
-                mission: this.DEFAULT_DATA.metadata.mission,
-                vision: this.DEFAULT_DATA.metadata.vision,
-                operatingHours: this.DEFAULT_DATA.metadata.operatingHours,
-            },
-            location: this.DEFAULT_DATA.location
-        };
+            return {
+                name: info.name,
+                tagline: info.tagline,
+                description: info.description,
+                address: info.address,
+                emails: [info.email], // Simplified for now since schema has single email
+                phones: [info.phone], // Simplified
+                socials: info.socialLinks as any,
+                branding: this.DEFAULT_DATA.branding, // Placeholder if branding not in schema
+                metadata: {
+                    mission: this.DEFAULT_DATA.metadata.mission,
+                    vision: this.DEFAULT_DATA.metadata.vision,
+                    operatingHours: this.DEFAULT_DATA.metadata.operatingHours,
+                },
+                location: this.DEFAULT_DATA.location
+            };
+        } catch (err) {
+            console.warn('[CompanyService] DB unavailable for getInfo, using defaults.', err);
+            return this.DEFAULT_DATA;
+        }
     }
 
     /**
-     * Update company information in Prisma
+     * Update company information in Supabase
      */
     async updateInfo(data: CompanyInfo): Promise<CompanyInfo> {
-        await prisma.companyInfo.upsert({
-            where: { id: 'singleton' },
-            update: {
-                name: data.name,
-                tagline: data.tagline,
-                description: data.description,
-                address: data.address,
-                email: data.emails[0] || '',
-                phone: data.phones[0] || '',
-                socialLinks: data.socials as any,
-            },
-            create: {
-                id: 'singleton',
-                name: data.name,
-                tagline: data.tagline,
-                description: data.description,
-                address: data.address,
-                email: data.emails[0] || '',
-                phone: data.phones[0] || '',
-                socialLinks: data.socials as any,
-            }
-        });
+        const { error } = await supabaseAdmin
+            .from('CompanyInfo')
+            .upsert(
+                {
+                    id: 'singleton',
+                    name: data.name,
+                    tagline: data.tagline,
+                    description: data.description,
+                    address: data.address,
+                    email: data.emails[0] || '',
+                    phone: data.phones[0] || '',
+                    socialLinks: data.socials as any,
+                },
+                { onConflict: 'id' }
+            );
+        if (error) throw error;
         return data;
     }
 

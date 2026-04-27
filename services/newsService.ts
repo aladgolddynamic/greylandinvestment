@@ -1,12 +1,12 @@
-import { prisma } from '@/lib/prisma';
-import { NewsArticle as DbNewsArticle } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { randomUUID } from 'crypto';
 import { NewsArticle, NewsBlock, BlockType } from '@/types/news';
 
 /**
- * NewsService handles news-specific operations using Prisma.
+ * NewsService handles news-specific operations using Supabase.
  */
 class NewsService {
-    private mapToNewsArticle(article: DbNewsArticle): NewsArticle {
+    private mapToNewsArticle(article: any): NewsArticle {
         return {
             id: article.id,
             title: article.title,
@@ -20,29 +20,35 @@ class NewsService {
             featured: article.featured,
             status: article.status as 'PUBLISHED' | 'DRAFT',
             contentBlocks: article.contentBlocks as unknown as NewsBlock[],
-            createdAt: article.createdAt.toISOString(),
-            updatedAt: article.updatedAt.toISOString()
+            createdAt: article.createdAt ? new Date(article.createdAt).toISOString() : new Date().toISOString(),
+            updatedAt: article.updatedAt ? new Date(article.updatedAt).toISOString() : new Date().toISOString()
         };
     }
 
     async getArticles(): Promise<NewsArticle[]> {
         try {
-            const articles = await prisma.newsArticle.findMany({
-                orderBy: { createdAt: 'desc' }
-            });
-            return articles.map(this.mapToNewsArticle);
+            const { data, error } = await supabaseAdmin
+                .from('NewsArticle')
+                .select('*')
+                .order('createdAt', { ascending: false });
+            if (error) throw error;
+            console.log(`[NewsService] Fetched ${(data || []).length} articles`);
+            return (data || []).map(a => this.mapToNewsArticle(a));
         } catch (err) {
-            console.warn('[NewsService] DB unavailable for getArticles.', err);
+            console.error('[NewsService] Error in getArticles:', err);
             return [];
         }
     }
 
     async getArticleBySlug(slug: string): Promise<NewsArticle | undefined> {
         try {
-            const article = await prisma.newsArticle.findUnique({
-                where: { slug }
-            });
-            return article ? this.mapToNewsArticle(article) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('NewsArticle')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToNewsArticle(data) : undefined;
         } catch (err) {
             console.warn('[NewsService] DB unavailable for getArticleBySlug.', err);
             return undefined;
@@ -51,10 +57,13 @@ class NewsService {
 
     async getArticleById(id: string): Promise<NewsArticle | undefined> {
         try {
-            const article = await prisma.newsArticle.findUnique({
-                where: { id }
-            });
-            return article ? this.mapToNewsArticle(article) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('NewsArticle')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToNewsArticle(data) : undefined;
         } catch (err) {
             console.warn('[NewsService] DB unavailable for getArticleById.', err);
             return undefined;
@@ -62,41 +71,55 @@ class NewsService {
     }
 
     async createArticle(data: NewsArticle): Promise<NewsArticle> {
-        const article = await prisma.newsArticle.create({
-            data: {
-                title: data.title,
-                slug: data.slug,
-                category: data.category,
-                date: data.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-                image: data.image,
-                excerpt: data.excerpt,
-                readTime: data.readTime || '5 min read',
-                content: data.content,
-                featured: data.featured || false,
-                status: data.status,
-                contentBlocks: data.contentBlocks as any
-            }
-        });
+        const { data: article, error } = await supabaseAdmin
+            .from('NewsArticle')
+            .insert([
+                {
+                    title: data.title,
+                    slug: data.slug,
+                    category: data.category,
+                    date: data.date || new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                    image: data.image,
+                    excerpt: data.excerpt,
+                    readTime: data.readTime || '5 min read',
+                    content: data.content,
+                    featured: data.featured || false,
+                    status: data.status,
+                    contentBlocks: data.contentBlocks as any,
+                    id: randomUUID(),
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
+                }
+            ])
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToNewsArticle(article);
     }
 
     async updateArticle(id: string, data: Partial<NewsArticle>): Promise<NewsArticle> {
         const updateData: any = { ...data };
+        // Remove fields that shouldn't be passed directly
+        delete updateData.id;
+        delete updateData.createdAt;
         if (data.contentBlocks) updateData.contentBlocks = data.contentBlocks as any;
-        if (data.readTime) updateData.readTime = data.readTime;
-        if (data.content !== undefined) updateData.content = data.content;
 
-        const article = await prisma.newsArticle.update({
-            where: { id },
-            data: updateData
-        });
+        const { data: article, error } = await supabaseAdmin
+            .from('NewsArticle')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToNewsArticle(article);
     }
 
     async deleteArticle(id: string): Promise<void> {
-        await prisma.newsArticle.delete({
-            where: { id }
-        });
+        const { error } = await supabaseAdmin
+            .from('NewsArticle')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 }
 

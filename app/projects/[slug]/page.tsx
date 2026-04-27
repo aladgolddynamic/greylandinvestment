@@ -2,7 +2,8 @@ import { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer/Footer';
-import { prisma } from '@/lib/prisma';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { Project } from '@/types/project';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,16 +19,17 @@ export async function generateMetadata(
   const { slug } = await params;
 
   try {
-    const project = await prisma.project.findUnique({ where: { slug } });
-    if (!project) return { title: 'Project Not Found | Greyland Investment Ltd' };
+    const { data: project, error } = await supabaseAdmin.from('Project').select('*').eq('slug', slug).single();
+    if (error || !project) return { title: 'Project Not Found | Greyland Investment Ltd' };
+    const p = project as Project;
 
-    const metaTitle = project.metaTitle || `${project.title} | Greyland Projects`;
-    const metaDesc = project.metaDescription || project.description;
+    const metaTitle = p.metaTitle || `${p.title} | Greyland Projects`;
+    const metaDesc = p.metaDescription || p.description;
     return {
       title: metaTitle,
       description: metaDesc,
-      openGraph: { title: metaTitle, description: metaDesc, images: project.image ? [project.image] : [], type: 'article' },
-      twitter: { card: 'summary_large_image', title: metaTitle, description: metaDesc, images: project.image ? [project.image] : [] },
+      openGraph: { title: metaTitle, description: metaDesc, images: p.image ? [p.image] : [], type: 'article' },
+      twitter: { card: 'summary_large_image', title: metaTitle, description: metaDesc, images: p.image ? [p.image] : [] },
     };
   } catch {
     return { title: 'Greyland Investment Ltd | Projects' };
@@ -40,7 +42,9 @@ export default async function ProjectDetailPage({ params }: Props) {
 
   let project;
   try {
-    project = await prisma.project.findUnique({ where: { slug } });
+    const { data, error } = await supabaseAdmin.from('Project').select('*').eq('slug', slug).single();
+    if (error) throw error;
+    project = data as Project;
   } catch {
     notFound();
   }
@@ -67,8 +71,8 @@ export default async function ProjectDetailPage({ params }: Props) {
         url: "https://greylandinvest.com.ng/logo.png"
       }
     },
-    datePublished: project.createdAt.toISOString(),
-    dateModified: project.updatedAt.toISOString(),
+    datePublished: project.createdAt ? new Date(project.createdAt).toISOString() : new Date().toISOString(),
+    dateModified: project.updatedAt ? new Date(project.updatedAt).toISOString() : new Date().toISOString(),
   };
 
   return (
@@ -118,7 +122,7 @@ export default async function ProjectDetailPage({ params }: Props) {
               
               <h3>Key Deliverables</h3>
               <ul>
-                {Array.isArray(project.deliverables) && project.deliverables.map((item, idx) => (
+                {Array.isArray(project.deliverables) && (project.deliverables as any[]).map((item: any, idx: number) => (
                   <li key={idx} className="font-semibold text-gray-700">{String(item)}</li>
                 ))}
               </ul>

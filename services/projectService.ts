@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/prisma';
-import { Project as DbProject } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { randomUUID } from 'crypto';
 
 import { Project, ProjectStatus } from '@/types/project';
 
@@ -7,49 +7,68 @@ import { Project, ProjectStatus } from '@/types/project';
  * ProjectService handles project-specific operations using Prisma.
  */
 class ProjectService {
-    private mapToProject(project: DbProject): Project {
-        return {
-            id: project.id,
-            title: project.title,
-            slug: project.slug,
-            industry: project.industry,
-            duration: project.duration,
-            location: project.location,
-            description: project.description,
-            deliverables: project.deliverables as string[],
-            image: project.image,
-            category: project.category,
-            featured: project.featured,
-            status: project.status as ProjectStatus,
-            publicationStatus: project.publicationStatus as 'DRAFT' | 'PUBLISHED',
-            startDate: project.startDate?.toISOString(),
-            endDate: project.endDate?.toISOString(),
-            client: project.client || undefined,
-            objectives: (project.objectives as string[]) || undefined,
-            technologies: (project.technologies as string[]) || undefined,
-            achievements: (project.achievements as string[]) || undefined,
-            gallery: (project.gallery as any[]) || undefined,
-            createdAt: project.createdAt.toISOString(),
-            updatedAt: project.updatedAt.toISOString()
-        };
+    private mapToProject(project: any): Project {
+        try {
+            return {
+                id: project.id,
+                title: project.title,
+                slug: project.slug,
+                industry: project.industry,
+                duration: project.duration,
+                location: project.location,
+                description: project.description,
+                deliverables: project.deliverables,
+                image: project.image,
+                category: project.category,
+                featured: project.featured,
+                status: project.status as ProjectStatus,
+                publicationStatus: project.publicationStatus as 'DRAFT' | 'PUBLISHED',
+                startDate: project.startDate ? new Date(project.startDate).toISOString() : undefined,
+                endDate: project.endDate ? new Date(project.endDate).toISOString() : undefined,
+                client: project.client || undefined,
+                objectives: project.objectives || undefined,
+                technologies: project.technologies || undefined,
+                achievements: project.achievements || undefined,
+                gallery: project.gallery || undefined,
+                tags: project.tags || undefined,
+                metaTitle: project.metaTitle || undefined,
+                metaDescription: project.metaDescription || undefined,
+                createdAt: project.createdAt ? new Date(project.createdAt).toISOString() : undefined,
+                updatedAt: project.updatedAt ? new Date(project.updatedAt).toISOString() : undefined
+            };
+        } catch (err) {
+            console.error('[ProjectService] Mapping error for project:', project?.id, err);
+            throw err;
+        }
     }
 
     async getProjects(): Promise<Project[]> {
         try {
-            const projects = await prisma.project.findMany({
-                orderBy: { createdAt: 'desc' }
-            });
-            return projects.map(this.mapToProject);
+            const { data, error } = await supabaseAdmin
+                .from('Project')
+                .select('*')
+                .order('createdAt', { ascending: false });
+            if (error) {
+                console.error('[ProjectService] Supabase Error:', error);
+                throw error;
+            }
+            console.log(`[ProjectService] Fetched ${(data || []).length} projects`);
+            return (data || []).map(p => this.mapToProject(p));
         } catch (err) {
-            console.warn('[ProjectService] DB unavailable for getProjects.', err);
+            console.error('[ProjectService] Error in getProjects:', err);
             return [];
         }
     }
 
     async getProjectBySlug(slug: string): Promise<Project | undefined> {
         try {
-            const project = await prisma.project.findUnique({ where: { slug } });
-            return project ? this.mapToProject(project) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('Project')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToProject(data) : undefined;
         } catch (err) {
             console.warn('[ProjectService] DB unavailable for getProjectBySlug.', err);
             return undefined;
@@ -58,8 +77,13 @@ class ProjectService {
 
     async getProjectById(id: string): Promise<Project | undefined> {
         try {
-            const project = await prisma.project.findUnique({ where: { id } });
-            return project ? this.mapToProject(project) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('Project')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToProject(data) : undefined;
         } catch (err) {
             console.warn('[ProjectService] DB unavailable for getProjectById.', err);
             return undefined;
@@ -68,11 +92,13 @@ class ProjectService {
 
     async getProjectsByCategory(category: string): Promise<Project[]> {
         try {
-            const projects = await prisma.project.findMany({
-                where: { category: category.toUpperCase() },
-                orderBy: { createdAt: 'desc' }
-            });
-            return projects.map(this.mapToProject);
+            const { data, error } = await supabaseAdmin
+                .from('Project')
+                .select('*')
+                .eq('category', category.toUpperCase())
+                .order('createdAt', { ascending: false });
+            if (error) throw error;
+            return (data || []).map(this.mapToProject);
         } catch (err) {
             console.warn('[ProjectService] DB unavailable for getProjectsByCategory.', err);
             return [];
@@ -80,8 +106,10 @@ class ProjectService {
     }
 
     async createProject(data: Project): Promise<Project> {
-        const project = await prisma.project.create({
-            data: {
+        const { data: project, error } = await supabaseAdmin
+            .from('Project')
+            .insert([{
+                id: randomUUID(),
                 title: data.title,
                 slug: data.slug || data.title.toLowerCase().replace(/ /g, '-'),
                 industry: data.industry,
@@ -94,39 +122,53 @@ class ProjectService {
                 featured: data.featured || false,
                 status: data.status || 'Planned',
                 publicationStatus: data.publicationStatus || 'DRAFT',
-                startDate: data.startDate ? new Date(data.startDate) : null,
-                endDate: data.endDate ? new Date(data.endDate) : null,
+                startDate: data.startDate ? new Date(data.startDate).toISOString() : null,
+                endDate: data.endDate ? new Date(data.endDate).toISOString() : null,
                 client: data.client,
                 objectives: data.objectives as any,
                 technologies: data.technologies as any,
                 achievements: data.achievements as any,
-                gallery: data.gallery as any
-            }
-        });
+                gallery: data.gallery as any,
+                tags: data.tags as any,
+                metaTitle: data.metaTitle,
+                metaDescription: data.metaDescription,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            }])
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToProject(project);
     }
 
     async updateProject(id: string, data: Partial<Project>): Promise<Project> {
         const updateData: any = { ...data };
-        if (data.startDate) updateData.startDate = new Date(data.startDate);
-        if (data.endDate) updateData.endDate = new Date(data.endDate);
+        delete updateData.id;
+        delete updateData.createdAt;
+        if (data.startDate) updateData.startDate = new Date(data.startDate).toISOString();
+        if (data.endDate) updateData.endDate = new Date(data.endDate).toISOString();
         if (data.deliverables) updateData.deliverables = data.deliverables as any;
         if (data.objectives) updateData.objectives = data.objectives as any;
         if (data.technologies) updateData.technologies = data.technologies as any;
         if (data.achievements) updateData.achievements = data.achievements as any;
         if (data.gallery) updateData.gallery = data.gallery as any;
 
-        const project = await prisma.project.update({
-            where: { id },
-            data: updateData
-        });
+        const { data: project, error } = await supabaseAdmin
+            .from('Project')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToProject(project);
     }
 
     async deleteProject(id: string): Promise<void> {
-        await prisma.project.delete({
-            where: { id }
-        });
+        const { error } = await supabaseAdmin
+            .from('Project')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 }
 

@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     },
   },
 
-  serverExternalPackages: ["@prisma/client"],
+
 
   compiler: {
     // Strip all console.log calls in production builds

@@ -1,10 +1,9 @@
-import { prisma } from '@/lib/prisma';
-import { Career as DbJob } from '@prisma/client';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 import { Job } from '@/types/careers';
 
 class CareersService {
-    private mapToJob(dbJob: DbJob): Job {
+    private mapToJob(dbJob: any): Job {
         return {
             id: dbJob.id,
             title: dbJob.title,
@@ -18,20 +17,22 @@ class CareersService {
             responsibilities: dbJob.responsibilities as string[],
             requirements: dbJob.requirements as string[],
             salaryRange: dbJob.salaryRange || undefined,
-            deadline: dbJob.deadline.toISOString().split('T')[0],
+            deadline: dbJob.deadline ? new Date(dbJob.deadline).toISOString().split('T')[0] : '',
             status: dbJob.status as 'OPEN' | 'CLOSED',
             featured: dbJob.featured,
-            createdAt: dbJob.createdAt.toISOString(),
-            updatedAt: dbJob.updatedAt.toISOString()
+            createdAt: dbJob.createdAt ? new Date(dbJob.createdAt).toISOString() : new Date().toISOString(),
+            updatedAt: dbJob.updatedAt ? new Date(dbJob.updatedAt).toISOString() : new Date().toISOString()
         };
     }
 
     async getJobs(): Promise<Job[]> {
         try {
-            const jobs = await prisma.career.findMany({
-                orderBy: { createdAt: 'desc' }
-            });
-            return jobs.map(this.mapToJob);
+            const { data, error } = await supabaseAdmin
+                .from('Career')
+                .select('*')
+                .order('createdAt', { ascending: false });
+            if (error) throw error;
+            return (data || []).map(this.mapToJob);
         } catch (err) {
             console.warn('[CareersService] DB unavailable for getJobs.', err);
             return [];
@@ -40,10 +41,13 @@ class CareersService {
 
     async getJobBySlug(slug: string): Promise<Job | undefined> {
         try {
-            const job = await prisma.career.findUnique({
-                where: { slug }
-            });
-            return job ? this.mapToJob(job) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('Career')
+                .select('*')
+                .eq('slug', slug)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToJob(data) : undefined;
         } catch (err) {
             console.warn('[CareersService] DB unavailable for getJobBySlug.', err);
             return undefined;
@@ -52,10 +56,13 @@ class CareersService {
 
     async getJobById(id: string): Promise<Job | undefined> {
         try {
-            const job = await prisma.career.findUnique({
-                where: { id }
-            });
-            return job ? this.mapToJob(job) : undefined;
+            const { data, error } = await supabaseAdmin
+                .from('Career')
+                .select('*')
+                .eq('id', id)
+                .single();
+            if (error) throw error;
+            return data ? this.mapToJob(data) : undefined;
         } catch (err) {
             console.warn('[CareersService] DB unavailable for getJobById.', err);
             return undefined;
@@ -63,45 +70,57 @@ class CareersService {
     }
 
     async createJob(data: Job): Promise<Job> {
-        const job = await prisma.career.create({
-            data: {
-                title: data.title,
-                slug: data.slug,
-                department: data.department,
-                location: data.location,
-                employmentType: data.employmentType,
-                experienceLevel: data.experienceLevel,
-                excerpt: data.excerpt,
-                descriptionBlocks: data.descriptionBlocks as any,
-                responsibilities: data.responsibilities,
-                requirements: data.requirements,
-                salaryRange: data.salaryRange,
-                deadline: new Date(data.deadline),
-                status: data.status,
-                featured: data.featured || false
-            }
-        });
+        const { data: job, error } = await supabaseAdmin
+            .from('Career')
+            .insert([
+                {
+                    title: data.title,
+                    slug: data.slug,
+                    department: data.department,
+                    location: data.location,
+                    employmentType: data.employmentType,
+                    experienceLevel: data.experienceLevel,
+                    excerpt: data.excerpt,
+                    descriptionBlocks: data.descriptionBlocks as any,
+                    responsibilities: data.responsibilities,
+                    requirements: data.requirements,
+                    salaryRange: data.salaryRange,
+                    deadline: new Date(data.deadline).toISOString(),
+                    status: data.status,
+                    featured: data.featured || false
+                }
+            ])
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToJob(job);
     }
 
     async updateJob(id: string, data: Partial<Job>): Promise<Job> {
         const updateData: any = { ...data };
-        if (data.deadline) updateData.deadline = new Date(data.deadline);
+        delete updateData.id;
+        delete updateData.createdAt;
+        if (data.deadline) updateData.deadline = new Date(data.deadline).toISOString();
         if (data.descriptionBlocks) updateData.descriptionBlocks = data.descriptionBlocks as any;
         if (data.responsibilities) updateData.responsibilities = data.responsibilities as any;
         if (data.requirements) updateData.requirements = data.requirements as any;
 
-        const job = await prisma.career.update({
-            where: { id },
-            data: updateData
-        });
+        const { data: job, error } = await supabaseAdmin
+            .from('Career')
+            .update(updateData)
+            .eq('id', id)
+            .select()
+            .single();
+        if (error) throw error;
         return this.mapToJob(job);
     }
 
     async deleteJob(id: string): Promise<void> {
-        await prisma.career.delete({
-            where: { id }
-        });
+        const { error } = await supabaseAdmin
+            .from('Career')
+            .delete()
+            .eq('id', id);
+        if (error) throw error;
     }
 }
 

@@ -25,8 +25,11 @@ export interface Project {
     client?: string;
     objectives?: string[];
     technologies?: string[];
+    tags?: string[];
     achievements?: string[];
     gallery?: { url: string; caption?: string }[];
+    metaTitle?: string;
+    metaDescription?: string;
     createdAt?: string;
     updatedAt?: string;
 }

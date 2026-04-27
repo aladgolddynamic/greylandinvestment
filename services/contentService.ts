@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { SiteContent } from '@/types/content';
 
 const DEFAULT_HOMEPAGE = {
@@ -25,10 +25,13 @@ class ContentService {
      */
     async getPageContent(pageId: string): Promise<any> {
         try {
-            const page = await prisma.pageContent.findUnique({
-                where: { id: pageId }
-            });
-            return page?.data || null;
+            const { data, error } = await supabaseAdmin
+                .from('PageContent')
+                .select('*')
+                .eq('id', pageId)
+                .single();
+            if (error) throw error;
+            return data?.data || null;
         } catch (err) {
             console.warn(`[ContentService] DB unavailable for pageId "${pageId}", using defaults.`, err);
             return null;
@@ -61,19 +64,23 @@ class ContentService {
      */
     async updateContent(data: Partial<SiteContent>): Promise<SiteContent> {
         if (data.homepage) {
-            await prisma.pageContent.upsert({
-                where: { id: 'homepage' },
-                update: { data: data.homepage as any },
-                create: { id: 'homepage', data: data.homepage as any }
-            });
+            const { error } = await supabaseAdmin
+                .from('PageContent')
+                .upsert(
+                    { id: 'homepage', data: data.homepage as any },
+                    { onConflict: 'id' }
+                );
+            if (error) throw error;
         }
         
         if (data.about) {
-            await prisma.pageContent.upsert({
-                where: { id: 'about' },
-                update: { data: data.about as any },
-                create: { id: 'about', data: data.about as any }
-            });
+            const { error } = await supabaseAdmin
+                .from('PageContent')
+                .upsert(
+                    { id: 'about', data: data.about as any },
+                    { onConflict: 'id' }
+                );
+            if (error) throw error;
         }
 
         return this.getContent();
